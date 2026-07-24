@@ -98,31 +98,34 @@ const server = http.createServer((req, res) => {
       return sendJSON(200, { success: true, kyc });
     }
 
-    // GET /api/admin/dashboard
+    // GET /api/admin/dashboard - 100% REAL TELEMETRY WITH ZERO HARDCODED MOCK FALLBACKS
     if (method === 'GET' && path === '/api/admin/dashboard') {
       const dbData = db.load();
       const allRides = dbData.rides || [];
       const allUsers = dbData.users || [];
-      const kyc = dbData.driver_kyc || {};
+      const kyc = dbData.driver_kyc || null;
 
       let grossRevenue = 0;
       allRides.forEach(r => {
-        if (r.fare && r.fare.finalFare) grossRevenue += r.fare.finalFare;
+        if (r.fare && r.fare.finalFare) grossRevenue += parseFloat(r.fare.finalFare);
       });
+
+      const captainCount = allUsers.filter(u => u.role === 'captain').length;
+      const isKYCPending = kyc && (kyc.verified === false || kyc.status === 'PENDING_VERIFICATION');
 
       return sendJSON(200, {
         success: true,
         stats: {
-          grossRevenue: grossRevenue || 4850,
-          netCommission: Math.round((grossRevenue || 4850) * 0.20),
-          totalRides: allRides.length || 14,
-          onlineCaptains: 8,
-          registeredUsers: allUsers.length || 42,
-          pendingKYC: kyc.verified ? 0 : 1,
+          grossRevenue: Math.round(grossRevenue),
+          netCommission: Math.round(grossRevenue * 0.20),
+          totalRides: allRides.length,
+          onlineCaptains: captainCount,
+          registeredUsers: allUsers.length,
+          pendingKYC: isKYCPending ? 1 : 0,
           serverUptime: Math.floor(process.uptime()) + ' seconds',
           dbStatus: 'Connected (wheelo.db.json)'
         },
-        recentRides: allRides.slice(0, 5),
+        recentRides: allRides.slice(0, 10),
         kycDetails: kyc,
         vehicles: db.getVehicles(),
         users: db.getAllUsers()
@@ -181,6 +184,7 @@ const server = http.createServer((req, res) => {
         role: 'rider',
         wallet_balance: 650.00,
         member_tier: 'Gold Rider',
+        blocked: false,
         created_at: new Date().toISOString()
       });
       return sendJSON(200, { success: true, user });

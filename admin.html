@@ -126,33 +126,33 @@
 
     <div style="display: flex; gap: 12px; align-items: center;">
       <div class="badge-live">
-        <div class="badge-pulse"></div> REAL-TIME SYSTEM LIVE
+        <div class="badge-pulse"></div> REAL DATABASE TELEMETRY
       </div>
       <a href="index.html" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Open Main App</a>
     </div>
   </header>
 
-  <!-- 5-Card Real-Time Metrics Grid (Includes Total Registered Users) -->
+  <!-- 100% Real-Time Database Metrics Grid -->
   <div class="grid-metrics">
     <div class="card">
       <div class="label">Gross Platform Revenue</div>
-      <div id="stat-revenue" class="val">₹4,850</div>
+      <div id="stat-revenue" class="val">₹0</div>
     </div>
     <div class="card">
       <div class="label">Net Commission (20%)</div>
-      <div id="stat-commission" class="val" style="color: var(--success)">₹970</div>
+      <div id="stat-commission" class="val" style="color: var(--success)">₹0</div>
     </div>
     <div class="card">
-      <div class="label">Total Registered Users</div>
-      <div id="stat-registered-users" class="val" style="color: #3B82F6">2 Users</div>
+      <div class="label">Registered Users</div>
+      <div id="stat-registered-users" class="val" style="color: #3B82F6">0 Users</div>
     </div>
     <div class="card">
       <div class="label">Total Trips Booked</div>
-      <div id="stat-trips" class="val" style="color: var(--secondary)">14</div>
+      <div id="stat-trips" class="val" style="color: var(--secondary)">0</div>
     </div>
     <div class="card">
-      <div class="label">Active Online Captains</div>
-      <div id="stat-captains" class="val" style="color: #A855F7">8 Drivers</div>
+      <div class="label">Active Captains</div>
+      <div id="stat-captains" class="val" style="color: #A855F7">0 Drivers</div>
     </div>
   </div>
 
@@ -164,7 +164,7 @@
       </div>
       <div style="display: flex; gap: 10px; align-items: center;">
         <span id="user-count-badge" class="badge-live" style="background: rgba(59, 130, 246, 0.2); border-color: #3B82F6; color: #3B82F6;">
-          <i class="fas fa-user-check"></i> 2 Registered Users
+          <i class="fas fa-user-check"></i> 0 Registered Users
         </span>
       </div>
     </div>
@@ -242,7 +242,7 @@
         <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
           <div style="display: flex; justify-content: space-between;"><span>Server Status:</span><strong style="color: var(--success)">ONLINE (Port 3000)</strong></div>
           <div style="display: flex; justify-content: space-between;"><span>Database Engine:</span><strong>SQLite JSON (wheelo.db.json)</strong></div>
-          <div style="display: flex; justify-content: space-between;"><span>Uptime:</span><strong id="stat-uptime">120 secs</strong></div>
+          <div style="display: flex; justify-content: space-between;"><span>Uptime:</span><strong id="stat-uptime">0 secs</strong></div>
           <div style="display: flex; justify-content: space-between;"><span>API Endpoint:</span><a href="/api/admin/dashboard" target="_blank" style="color: var(--secondary)">/api/admin/dashboard</a></div>
         </div>
       </div>
@@ -252,24 +252,24 @@
         <div class="section-title">
           <div><i class="fas fa-id-badge" style="color: var(--success)"></i> Captain KYC Verification Desk</div>
         </div>
-        <div style="font-size: 12px; margin-bottom: 6px;">Captain Ramesh Kumar</div>
+        <div id="kyc-driver-name" style="font-size: 12px; margin-bottom: 6px; font-weight: 700;">No Driver Submissions</div>
         <div id="kyc-details-info" style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">
-          License: <strong id="kyc-license-text">DL-0420210089421</strong> | RC: <strong id="kyc-rc-text">KA-05-EV-4890</strong>
+          License: <strong id="kyc-license-text">None</strong> | RC: <strong id="kyc-rc-text">None</strong>
         </div>
 
         <div style="display: flex; gap: 8px; margin-bottom: 12px;">
           <div style="flex:1; text-align:center;">
             <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">License Photo</div>
-            <img id="kyc-img-license" src="https://images.unsplash.com/photo-1544717305-2782549b5136?w=200" style="width:100%; height:64px; object-fit:cover; border-radius:8px; border:1px solid var(--border-color);">
+            <img id="kyc-img-license" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='100' fill='%23121826'><rect width='100%' height='100%'/><text x='50%' y='50%' fill='%2394A3B8' dominant-baseline='middle' text-anchor='middle' font-size='12'>No Photo</text></svg>" style="width:100%; height:64px; object-fit:cover; border-radius:8px; border:1px solid var(--border-color);">
           </div>
           <div style="flex:1; text-align:center;">
             <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">Vehicle RC Photo</div>
-            <img id="kyc-img-rc" src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=200" style="width:100%; height:64px; object-fit:cover; border-radius:8px; border:1px solid var(--border-color);">
+            <img id="kyc-img-rc" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='100' fill='%23121826'><rect width='100%' height='100%'/><text x='50%' y='50%' fill='%2394A3B8' dominant-baseline='middle' text-anchor='middle' font-size='12'>No Photo</text></svg>" style="width:100%; height:64px; object-fit:cover; border-radius:8px; border:1px solid var(--border-color);">
           </div>
         </div>
 
-        <div id="kyc-status-badge" style="font-size: 11px; margin-bottom: 12px; font-weight: 700; color: var(--success); text-align: center;">
-          Current Status: VERIFIED & APPROVED
+        <div id="kyc-status-badge" style="font-size: 11px; margin-bottom: 12px; font-weight: 700; color: var(--text-muted); text-align: center;">
+          Current Status: NO PENDING KYC
         </div>
         <div style="display: flex; gap: 8px;">
           <button class="btn btn-success" style="flex: 1;" onclick="updateKYC(true)">APPROVE</button>
@@ -306,11 +306,11 @@
         const data = await res.json();
         if (!data || !data.stats) return;
 
-        document.getElementById('stat-revenue').textContent = `₹${data.stats.grossRevenue}`;
-        document.getElementById('stat-commission').textContent = `₹${data.stats.netCommission}`;
-        document.getElementById('stat-trips').textContent = data.stats.totalRides;
-        document.getElementById('stat-captains').textContent = `${data.stats.onlineCaptains} Drivers`;
-        document.getElementById('stat-uptime').textContent = data.stats.serverUptime;
+        document.getElementById('stat-revenue').textContent = `₹${data.stats.grossRevenue || 0}`;
+        document.getElementById('stat-commission').textContent = `₹${data.stats.netCommission || 0}`;
+        document.getElementById('stat-trips').textContent = data.stats.totalRides || 0;
+        document.getElementById('stat-captains').textContent = `${data.stats.onlineCaptains || 0} Drivers`;
+        document.getElementById('stat-uptime').textContent = data.stats.serverUptime || '0 secs';
 
         const userCount = data.users ? data.users.length : (data.stats.registeredUsers || 0);
         document.getElementById('stat-registered-users').textContent = `${userCount} Users`;
@@ -318,14 +318,21 @@
 
         const kycBadge = document.getElementById('kyc-status-badge');
         if (data.kycDetails) {
-          document.getElementById('kyc-license-text').textContent = data.kycDetails.license_no || 'DL-0420210089421';
-          document.getElementById('kyc-rc-text').textContent = data.kycDetails.rc_no || 'KA-05-EV-4890';
+          document.getElementById('kyc-driver-name').textContent = data.kycDetails.driver_name || 'Captain Driver';
+          document.getElementById('kyc-license-text').textContent = data.kycDetails.license_no || 'None';
+          document.getElementById('kyc-rc-text').textContent = data.kycDetails.rc_no || 'None';
           if (data.kycDetails.license_doc) document.getElementById('kyc-img-license').src = data.kycDetails.license_doc;
           if (data.kycDetails.rc_doc) document.getElementById('kyc-img-rc').src = data.kycDetails.rc_doc;
 
           const isVerified = data.kycDetails.verified || data.kycDetails.status === 'VERIFIED';
-          kycBadge.textContent = isVerified ? 'Current Status: VERIFIED & APPROVED' : 'Current Status: PENDING / REJECTED';
+          kycBadge.textContent = isVerified ? 'Current Status: VERIFIED & APPROVED' : 'Current Status: PENDING VERIFICATION';
           kycBadge.style.color = isVerified ? 'var(--success)' : 'var(--danger)';
+        } else {
+          document.getElementById('kyc-driver-name').textContent = 'No Driver Submissions';
+          document.getElementById('kyc-license-text').textContent = 'None';
+          document.getElementById('kyc-rc-text').textContent = 'None';
+          kycBadge.textContent = 'Current Status: NO PENDING KYC';
+          kycBadge.style.color = 'var(--text-muted)';
         }
 
         renderUsersTable(data.users || []);
@@ -346,10 +353,10 @@
             <td><strong>${r.id}</strong></td>
             <td><span style="text-transform: uppercase;">${r.vehicle_type || r.vehicleId || 'BIKE'}</span></td>
             <td>
-              <div style="font-weight: 700;">${r.pickup ? (r.pickup.address || 'Pickup') : 'MG Road Metro'}</div>
-              <div style="font-size: 11px; color: var(--text-muted);">➔ ${r.drop ? (r.drop.address || 'Drop') : 'Indiranagar 100ft Road'}</div>
+              <div style="font-weight: 700;">${r.pickup ? (r.pickup.address || 'Pickup') : (r.pickup_address || 'Pickup')}</div>
+              <div style="font-size: 11px; color: var(--text-muted);">➔ ${r.drop ? (r.drop.address || 'Drop') : (r.drop_address || 'Drop')}</div>
             </td>
-            <td><strong style="color: var(--primary)">₹${r.fare ? r.fare.finalFare : 45}</strong></td>
+            <td><strong style="color: var(--primary)">₹${r.fare ? (r.fare.finalFare || r.fare) : 0}</strong></td>
             <td><span class="status-tag ${statusClass}">${r.status}</span></td>
           `;
           tbody.appendChild(tr);

@@ -20,21 +20,6 @@ const defaultDb = {
       member_tier: 'Gold Rider',
       blocked: false,
       created_at: new Date().toISOString()
-    },
-    {
-      id: 'captain_ramesh',
-      name: 'Ramesh Kumar',
-      email: 'ramesh.captain@wheelo.app',
-      password: 'password123',
-      phone: '+91 91234 56789',
-      role: 'captain',
-      vehicle_no: 'KA-05-EV-4890',
-      vehicle_model: 'Yamaha FZ-S (Bike Taxi)',
-      today_earnings: 1420.00,
-      trips_completed: 12,
-      rating: 4.89,
-      blocked: false,
-      created_at: new Date().toISOString()
     }
   ],
   vehicles: [
@@ -46,8 +31,7 @@ const defaultDb = {
   ],
   saved_places: [
     { id: 'home', userId: 'rider_ananya', name: 'Home', address: 'BTM Layout 2nd Stage', lat: 12.9166, lng: 77.6101, icon: 'fa-house' },
-    { id: 'work', userId: 'rider_ananya', name: 'Work / Office', address: 'Manyata Tech Park, Nagavara', lat: 13.0457, lng: 77.6200, icon: 'fa-briefcase' },
-    { id: 'gym', userId: 'rider_ananya', name: 'Fitness Gym', address: 'Koramangala 5th Block', lat: 12.9348, lng: 77.6245, icon: 'fa-dumbbell' }
+    { id: 'work', userId: 'rider_ananya', name: 'Work / Office', address: 'Manyata Tech Park, Nagavara', lat: 13.0457, lng: 77.6200, icon: 'fa-briefcase' }
   ],
   coupons: {
     'FIRST50': { discountPercent: 50, maxDiscount: 40, desc: '50% OFF (Max ₹40)' },
@@ -62,28 +46,10 @@ const defaultDb = {
       amount: 500.00,
       type: 'Credit',
       date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-    },
-    {
-      id: 'TXN-9042',
-      userId: 'rider_ananya',
-      title: 'UPI Topup via GPay',
-      amount: 150.00,
-      type: 'Credit',
-      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
     }
   ],
   rides: [],
-  driver_kyc: {
-    verified: true,
-    license_no: 'DL-0420210089421',
-    rc_no: 'KA-05-EV-4890',
-    expiry_date: '2032-11-15',
-    rc_status: 'Verified (KA-05-EV-4890)',
-    insurance_status: 'Active (HDFC ERGO)',
-    license_doc: 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=200',
-    rc_doc: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=200',
-    rating: 4.89
-  }
+  driver_kyc: null
 };
 
 class DatabaseEngine {
@@ -121,7 +87,7 @@ class DatabaseEngine {
   // User Management CRUD
   getAllUsers() {
     const db = this.load();
-    return db.users || defaultDb.users;
+    return db.users || [];
   }
 
   deleteUser(userId) {
@@ -155,7 +121,7 @@ class DatabaseEngine {
       email: userData.email,
       password: userData.password || '123456',
       phone: userData.phone || '+91 98765 00000',
-      role: 'rider',
+      role: userData.role || 'rider',
       wallet_balance: 500.00,
       member_tier: 'Gold Rider',
       blocked: false,
@@ -184,10 +150,11 @@ class DatabaseEngine {
     db.driver_kyc = {
       verified: false,
       status: 'PENDING_VERIFICATION',
+      driver_name: kycData.driverName || 'Captain Driver',
       license_no: kycData.licenseNo || 'DL-PENDING',
       rc_no: kycData.rcNo || 'KA-05-PENDING',
-      license_doc: kycData.licenseDoc || 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=200',
-      rc_doc: kycData.rcDoc || 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=200',
+      license_doc: kycData.licenseDoc || '',
+      rc_doc: kycData.rcDoc || '',
       submitted_at: new Date().toISOString()
     };
     this.save(db);
@@ -241,10 +208,11 @@ class DatabaseEngine {
   // Driver KYC CRUD
   updateKYCStatus(verified = true) {
     const db = this.load();
-    if (!db.driver_kyc) db.driver_kyc = defaultDb.driver_kyc;
-    db.driver_kyc.verified = verified;
-    db.driver_kyc.status = verified ? 'VERIFIED' : 'REJECTED';
-    this.save(db);
+    if (db.driver_kyc) {
+      db.driver_kyc.verified = verified;
+      db.driver_kyc.status = verified ? 'VERIFIED' : 'REJECTED';
+      this.save(db);
+    }
     return db.driver_kyc;
   }
 

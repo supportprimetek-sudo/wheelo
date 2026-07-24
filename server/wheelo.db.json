@@ -1,5 +1,39 @@
 {
-  "users": [],
+  "users": [
+    {
+      "id": "usr_ananya",
+      "name": "Ananya Sharma",
+      "email": "ananya.sharma@example.com",
+      "phone": "+91 98765 43210",
+      "role": "rider",
+      "wallet_balance": 650.0,
+      "member_tier": "Gold Rider",
+      "blocked": false,
+      "created_at": "2026-07-24T20:50:00.000Z"
+    },
+    {
+      "id": "usr_rajesh",
+      "name": "Rajesh Kumar",
+      "email": "rajesh.captain@wheelo.com",
+      "phone": "+91 91234 56789",
+      "role": "captain",
+      "wallet_balance": 1420.0,
+      "member_tier": "Top Rated Captain",
+      "blocked": false,
+      "created_at": "2026-07-24T20:50:00.000Z"
+    },
+    {
+      "id": "usr_priya",
+      "name": "Priya Singh",
+      "email": "priya.singh@example.com",
+      "phone": "+91 98111 22334",
+      "role": "rider",
+      "wallet_balance": 300.0,
+      "member_tier": "Silver Rider",
+      "blocked": false,
+      "created_at": "2026-07-24T20:50:00.000Z"
+    }
+  ],
   "vehicles": [],
   "saved_places": [],
   "coupons": {

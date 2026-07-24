@@ -56,9 +56,9 @@ const WheeloAPI = (function () {
       method: 'POST',
       body: JSON.stringify({ email, password })
     }),
-    loginUser: (phone) => request('/users/login', {
+    loginUser: (phone, name, email, role) => request('/users/login', {
       method: 'POST',
-      body: JSON.stringify({ phone })
+      body: JSON.stringify({ phone, name, email, role })
     }),
     submitDriverKYC: (kycData) => request('/captain/kyc/submit', {
       method: 'POST',

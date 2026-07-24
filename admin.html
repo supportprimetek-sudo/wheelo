@@ -432,7 +432,14 @@
       tbody.innerHTML = '';
 
       if (!users || users.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No registered users found</td></tr>';
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 16px;">
+              No registered users found in database.<br>
+              <button class="btn btn-success" style="margin-top: 8px; font-size: 11px; padding: 6px 14px;" onclick="seedSampleUsers()">+ SEED DEFAULT PLATFORM USERS</button>
+            </td>
+          </tr>
+        `;
         return;
       }
 
@@ -462,6 +469,22 @@
         `;
         tbody.appendChild(tr);
       });
+    }
+
+    async function seedSampleUsers() {
+      const defaultUsers = [
+        { name: 'Ananya Sharma', email: 'ananya.sharma@example.com', phone: '+91 98765 43210', role: 'rider' },
+        { name: 'Rajesh Kumar', email: 'rajesh.captain@wheelo.com', phone: '+91 91234 56789', role: 'captain' },
+        { name: 'Priya Singh', email: 'priya.singh@example.com', phone: '+91 98111 22334', role: 'rider' }
+      ];
+      for (let u of defaultUsers) {
+        await fetch('/api/users/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(u)
+        }).catch(() => {});
+      }
+      loadAdminTelemetry();
     }
 
     async function deleteUserAccount(userId) {

@@ -175,19 +175,26 @@ const server = http.createServer((req, res) => {
 
     // POST /api/users/login
     if (method === 'POST' && path === '/api/users/login') {
-      const { phone } = payload;
+      const { phone, name, email, role } = payload;
+      const cleanPhone = phone ? (phone.startsWith('+91') ? phone : `+91 ${phone}`) : '+91 98765 43210';
       const user = db.saveUser({
-        id: 'rider_' + (phone ? phone.slice(-4) : 'ananya'),
-        name: 'Ananya Sharma',
-        phone: phone ? `+91 ${phone}` : '+91 98765 43210',
-        email: 'ananya.sharma@example.com',
-        role: 'rider',
+        id: 'usr_' + (phone ? phone.replace(/\D/g, '').slice(-6) : 'ananya'),
+        name: name || 'Ananya Sharma',
+        phone: cleanPhone,
+        email: email || 'ananya.sharma@example.com',
+        role: role || 'rider',
         wallet_balance: 650.00,
         member_tier: 'Gold Rider',
         blocked: false,
         created_at: new Date().toISOString()
       });
       return sendJSON(200, { success: true, user });
+    }
+
+    // POST /api/users/register
+    if (method === 'POST' && path === '/api/users/register') {
+      const res = db.registerUser(payload);
+      return sendJSON(res.success ? 200 : 400, res);
     }
 
     // GET /api/places

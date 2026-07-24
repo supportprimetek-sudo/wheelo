@@ -46,7 +46,7 @@ const WheeloStorage = (function () {
     saveUserProfile: (user) => {
       setItem(STORAGE_KEYS.USER_PROFILE, user);
       if (typeof WheeloAPI !== 'undefined' && typeof WheeloAPI.loginUser === 'function') {
-        WheeloAPI.loginUser(user.phone).catch(e => console.warn('API login sync error:', e));
+        WheeloAPI.loginUser(user.phone, user.name, user.email, user.role || 'rider').catch(e => console.warn('API login sync error:', e));
       }
     },
     logoutUser: () => {

@@ -44,7 +44,41 @@ try {
 }
 
 const defaultDb = {
-  users: [],
+  users: [
+    {
+      id: 'usr_ananya',
+      name: 'Ananya Sharma',
+      email: 'ananya.sharma@example.com',
+      phone: '+91 98765 43210',
+      role: 'rider',
+      wallet_balance: 650.00,
+      member_tier: 'Gold Rider',
+      blocked: false,
+      created_at: new Date().toISOString()
+    },
+    {
+      id: 'usr_rajesh',
+      name: 'Rajesh Kumar',
+      email: 'rajesh.captain@wheelo.com',
+      phone: '+91 91234 56789',
+      role: 'captain',
+      wallet_balance: 1420.00,
+      member_tier: 'Top Rated Captain',
+      blocked: false,
+      created_at: new Date().toISOString()
+    },
+    {
+      id: 'usr_priya',
+      name: 'Priya Singh',
+      email: 'priya.singh@example.com',
+      phone: '+91 98111 22334',
+      role: 'rider',
+      wallet_balance: 300.00,
+      member_tier: 'Silver Rider',
+      blocked: false,
+      created_at: new Date().toISOString()
+    }
+  ],
   vehicles: [],
   saved_places: [],
   coupons: {

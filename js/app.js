@@ -27,7 +27,10 @@ const WheeloApp = (function () {
 
     renderSavedPlacesChips();
     renderLandmarkChips();
-    updateUserProfileUI();
+    const activeUser = WheeloStorage.getUserProfile();
+    if (activeUser && typeof WheeloAPI !== 'undefined' && typeof WheeloAPI.loginUser === 'function') {
+      WheeloAPI.loginUser(activeUser.phone, activeUser.name, activeUser.email, activeUser.role || 'rider').catch(() => {});
+    }
 
     await syncAndRenderVehicleCards();
 

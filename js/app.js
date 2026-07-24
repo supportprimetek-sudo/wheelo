@@ -662,24 +662,25 @@ const WheeloApp = (function () {
     const otpBox = document.getElementById('otp-box-display');
     const otpVal = document.getElementById('otp-code-val');
 
+    const otpCode = activeRide.otp || activeRide.pin || '4892';
+    if (otpVal) otpVal.textContent = otpCode;
+
     if (activeRide.stage === 'SEARCHING') {
       statusTitle.textContent = 'Searching Nearby Captains...';
       statusDesc.textContent = 'Connecting you to top-rated drivers nearby';
-      otpBox.style.display = 'none';
+      if (otpBox) otpBox.style.display = 'block';
     } else if (activeRide.stage === 'ASSIGNED') {
       statusTitle.textContent = 'Captain Assigned & On the Way';
-      statusDesc.textContent = 'Ramesh Kumar is moving to your pickup location';
-      otpBox.style.display = 'block';
-      otpVal.textContent = activeRide.otp;
+      statusDesc.textContent = 'Captain is moving to your pickup location';
+      if (otpBox) otpBox.style.display = 'block';
     } else if (activeRide.stage === 'ARRIVED') {
       statusTitle.textContent = 'Captain Arrived at Pickup!';
       statusDesc.textContent = 'Please share your 4-digit PIN OTP with captain';
-      otpBox.style.display = 'block';
-      otpVal.textContent = activeRide.otp;
+      if (otpBox) otpBox.style.display = 'block';
     } else if (activeRide.stage === 'IN_TRIP') {
       statusTitle.textContent = 'En Route to Destination';
       statusDesc.textContent = 'Google Maps live tracking active along polyline';
-      otpBox.style.display = 'none';
+      if (otpBox) otpBox.style.display = 'none';
     }
   }
 

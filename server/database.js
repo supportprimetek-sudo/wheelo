@@ -364,12 +364,15 @@ class DatabaseEngine {
     return (db.coupons && db.coupons[cleanCode]) ? db.coupons[cleanCode] : null;
   }
 
-  // Ride Operations
+  // Ride Operations - ENSURE 4-DIGIT START OTP IS ALWAYS GENERATED AND ATTACHED
   createRide(rideData) {
     const db = this.load();
+    const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
+
     const ride = {
       id: 'RIDE-' + Math.floor(10000 + Math.random() * 90000),
       rider_id: rideData.userId || 'rider_user',
+      otp: rideData.otp || generatedOtp,
       ...rideData,
       status: 'SEARCHING',
       created_at: new Date().toISOString()

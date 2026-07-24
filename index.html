@@ -20,6 +20,15 @@
 
   <!-- Custom Stylesheet (v3.0 Metallic Green) -->
   <link rel="stylesheet" href="css/styles.css?v=3.0">
+
+  <!-- Force Immediate PWA ServiceWorker Update -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(registrations => {
+        registrations.forEach(r => r.update());
+      });
+    }
+  </script>
 </head>
 <body>
 

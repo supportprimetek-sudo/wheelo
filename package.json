@@ -8,7 +8,7 @@
     "dev": "node server/server.js"
   },
   "dependencies": {
-    "firebase-admin": "^12.0.0"
+    "firebase-admin": "^12.7.0"
   },
   "keywords": [
     "ride-hailing",

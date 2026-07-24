@@ -1,5 +1,5 @@
 /* ==========================================================================
-   WHEELO - Firebase Firestore Cloud Database Engine
+   WHEELO - Firebase Firestore & Persistent Storage Engine (100% Clean Data)
    ========================================================================== */
 
 const fs = require('fs');
@@ -44,20 +44,7 @@ try {
 }
 
 const defaultDb = {
-  users: [
-    {
-      id: 'rider_ananya',
-      name: 'Ananya Sharma',
-      email: 'ananya.sharma@example.com',
-      password: 'password123',
-      phone: '+91 98765 43210',
-      role: 'rider',
-      wallet_balance: 650.00,
-      member_tier: 'Gold Rider',
-      blocked: false,
-      created_at: new Date().toISOString()
-    }
-  ],
+  users: [],
   vehicles: [
     { id: 'bike', name: 'Wheelo Bike', baseFare: 15, perKmRate: 5, perMinRate: 1.0, minFare: 25, capacity: '1 Rider', icon: 'fa-motorcycle', badge: 'FASTEST' },
     { id: 'auto', name: 'Wheelo Auto', baseFare: 20, perKmRate: 5, perMinRate: 1.5, minFare: 35, capacity: '3 Passengers', icon: 'fa-taxi', badge: 'POPULAR' },
@@ -65,25 +52,13 @@ const defaultDb = {
     { id: 'sedan', name: 'Premium Sedan', baseFare: 45, perKmRate: 5, perMinRate: 2.5, minFare: 75, capacity: '4 Passengers', icon: 'fa-car', badge: 'LUXURY' },
     { id: 'parcel', name: 'Express Parcel', baseFare: 20, perKmRate: 5, perMinRate: 1.0, minFare: 30, capacity: 'Package', icon: 'fa-box-open', badge: 'INSTANT' }
   ],
-  saved_places: [
-    { id: 'home', userId: 'rider_ananya', name: 'Home', address: 'BTM Layout 2nd Stage', lat: 12.9166, lng: 77.6101, icon: 'fa-house' },
-    { id: 'work', userId: 'rider_ananya', name: 'Work / Office', address: 'Manyata Tech Park, Nagavara', lat: 13.0457, lng: 77.6200, icon: 'fa-briefcase' }
-  ],
+  saved_places: [],
   coupons: {
     'FIRST50': { discountPercent: 50, maxDiscount: 40, desc: '50% OFF (Max ₹40)' },
     'WHEELO20': { discountPercent: 20, maxDiscount: 50, desc: '20% OFF (Max ₹50)' },
     'FREERIDE': { discountPercent: 100, maxDiscount: 100, desc: 'Flat ₹100 OFF' }
   },
-  transactions: [
-    {
-      id: 'TXN-9041',
-      userId: 'rider_ananya',
-      title: 'Welcome Bonus Credit',
-      amount: 500.00,
-      type: 'Credit',
-      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-    }
-  ],
+  transactions: [],
   rides: [],
   driver_kyc: null
 };
@@ -343,7 +318,7 @@ class DatabaseEngine {
   // Wallet & Transactions
   getWalletBalance(userId = 'rider_ananya') {
     const user = this.getUser(userId);
-    return user ? user.wallet_balance : 650.00;
+    return user ? user.wallet_balance : 500.00;
   }
 
   updateWallet(userId, amount, type = 'Credit', title = 'Wallet Topup') {
@@ -374,7 +349,7 @@ class DatabaseEngine {
       firestoreDb.collection('transactions').doc(txn.id).set(txn).catch(e => console.warn('Firestore txn error:', e));
     }
 
-    return { balance: user ? user.wallet_balance : 650.00, transaction: txn };
+    return { balance: user ? user.wallet_balance : 500.00, transaction: txn };
   }
 
   getTransactions(userId = 'rider_ananya') {
@@ -394,7 +369,7 @@ class DatabaseEngine {
     const db = this.load();
     const ride = {
       id: 'RIDE-' + Math.floor(10000 + Math.random() * 90000),
-      rider_id: 'rider_ananya',
+      rider_id: rideData.userId || 'rider_user',
       ...rideData,
       status: 'SEARCHING',
       created_at: new Date().toISOString()

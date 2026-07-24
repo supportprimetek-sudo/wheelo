@@ -9,14 +9,14 @@ const WheeloCaptain = (function () {
   let offerTimeRemaining = 15;
 
   let captainData = {
-    name: 'Ramesh Kumar',
-    rating: 4.89,
-    vehicleNo: 'KA-05-EV-4890',
-    vehicleModel: 'Yamaha FZ-S (Bike Taxi)',
-    todayEarnings: 1420,
-    tripsCompleted: 12,
-    acceptanceRate: 96,
-    bonusEarned: 250
+    name: 'Captain Driver',
+    rating: 5.0,
+    vehicleNo: 'Pending Onboarding',
+    vehicleModel: 'Registered Vehicle',
+    todayEarnings: 0,
+    tripsCompleted: 0,
+    acceptanceRate: 100,
+    bonusEarned: 0
   };
 
   const TURN_INSTRUCTIONS = [

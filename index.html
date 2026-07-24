@@ -211,8 +211,8 @@
                 <div class="captain-info">
                   <div class="captain-avatar"><i class="fas fa-user-shield"></i></div>
                   <div class="captain-details">
-                    <h4>Ramesh Kumar <span class="rating-badge"><i class="fas fa-star"></i> 4.89</span></h4>
-                    <p>Yamaha FZ-S • KA-05-EV-4890</p>
+                    <h4 id="captain-name-display">Assigned Captain <span id="captain-rating-display" class="rating-badge"><i class="fas fa-star"></i> 5.0</span></h4>
+                    <p id="captain-vehicle-display">Verified Vehicle • Active Driver</p>
                   </div>
                 </div>
                 <div style="display: flex; gap: 6px;">
@@ -340,12 +340,12 @@
               <div style="display: flex; flex-direction: column; gap: 10px;">
                 <div>
                   <label class="section-label" style="font-size: 11px;">Driving License Number</label>
-                  <input id="input-kyc-license" type="text" class="location-input" placeholder="DL-0420210089421" value="DL-0420210089421">
+                  <input id="input-kyc-license" type="text" class="location-input" placeholder="e.g. DL-0420210089421">
                 </div>
 
                 <div>
                   <label class="section-label" style="font-size: 11px;">Vehicle Registration (RC) Number</label>
-                  <input id="input-kyc-rc" type="text" class="location-input" placeholder="KA-05-EV-4890" value="KA-05-EV-4890">
+                  <input id="input-kyc-rc" type="text" class="location-input" placeholder="e.g. KA-05-AB-1234">
                 </div>
 
                 <div>
@@ -604,7 +604,7 @@
       </div>
 
       <div style="text-align: center;">
-        <div class="section-label">Add Tip for Captain (Ramesh Kumar)</div>
+        <div class="section-label">Add Tip for Captain</div>
         <div class="tip-chips">
           <div class="tip-chip" data-tip="10">+ ₹10</div>
           <div class="tip-chip" data-tip="20">+ ₹20</div>

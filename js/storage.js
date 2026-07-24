@@ -107,15 +107,7 @@ const WheeloStorage = (function () {
       history.unshift(ride);
       setItem(STORAGE_KEYS.RIDE_HISTORY, history);
     },
-    getCaptainKYC: () => getItem(STORAGE_KEYS.CAPTAIN_KYC, {
-      verified: true,
-      licenseNo: 'DL-0420210089421',
-      expiryDate: '2032-11-15',
-      rcStatus: 'Verified (KA-05-EV-4890)',
-      insuranceStatus: 'Active (HDFC ERGO)',
-      pollutionCert: 'Valid till Dec 2026',
-      rating: 4.89
-    }),
+    getCaptainKYC: () => getItem(STORAGE_KEYS.CAPTAIN_KYC, null),
     updateCaptainKYC: (kyc) => setItem(STORAGE_KEYS.CAPTAIN_KYC, kyc),
     getSettings: () => getItem(STORAGE_KEYS.SETTINGS, { soundEnabled: true, theme: 'dark' }),
     updateSettings: (s) => setItem(STORAGE_KEYS.SETTINGS, s)

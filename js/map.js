@@ -103,28 +103,40 @@ const WheeloMap = (function () {
     return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
   }
 
-  function initMap(containerId = 'map') {
-    if (map) return;
+  let isLeafletMode = false;
+  let leafletMap = null;
+  let leafletPickupMarker = null;
+  let leafletDropMarker = null;
+  let leafletRoutePolyline = null;
 
-    if (typeof google === 'undefined' || !google.maps) {
-      console.warn('Google Maps API not loaded yet, retrying...');
-      setTimeout(() => initMap(containerId), 500);
+  function fallbackToLeafletMap(containerId = 'map') {
+    if (isLeafletMode && leafletMap) return;
+    isLeafletMode = true;
+    console.log('🔄 Initializing Leaflet + OpenStreetMap Interactive Engine (Zero Key Required)...');
+
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (typeof L === 'undefined') {
+      console.warn('Leaflet JS library not loaded');
       return;
     }
 
-    const mapOptions = {
-      center: { lat: currentPickup.lat, lng: currentPickup.lng },
-      zoom: 14,
-      disableDefaultUI: true,
-      zoomControl: true,
-      styles: GOOGLE_DARK_STYLE
-    };
+    leafletMap = L.map(containerId, { zoomControl: false }).setView([currentPickup.lat, currentPickup.lng], 14);
 
-    map = new google.maps.Map(document.getElementById(containerId), mapOptions);
+    // Dark Matter tile layer matching Metallic Green theme
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap &copy; CARTO',
+      subdomains: 'abcd',
+      maxZoom: 19
+    }).addTo(leafletMap);
 
-    map.addListener('click', function (e) {
-      const lat = parseFloat(e.latLng.lat().toFixed(4));
-      const lng = parseFloat(e.latLng.lng().toFixed(4));
+    L.control.zoom({ position: 'bottomright' }).addTo(leafletMap);
+
+    leafletMap.on('click', function (e) {
+      const lat = parseFloat(e.latlng.lat.toFixed(4));
+      const lng = parseFloat(e.latlng.lng.toFixed(4));
       const customAddr = `Selected Location (${lat}, ${lng})`;
 
       if (window.WheeloApp && window.WheeloApp.getMapSelectMode() === 'stop') {
@@ -137,12 +149,61 @@ const WheeloMap = (function () {
       if (window.WheeloApp) window.WheeloApp.onLocationUpdated();
     });
 
-    locateUserGPS(false);
-
     updatePickupMarker();
     updateDropMarker();
-    spawnNearbyDrivers();
     calculateAndDrawRoute();
+  }
+
+  // Handle Google Maps API key authentication failure gracefully
+  window.gm_authFailure = function () {
+    console.warn('[Map Engine] Google Maps authentication key failure detected. Switching to Leaflet OpenStreetMap Engine...');
+    fallbackToLeafletMap();
+  };
+
+  function initMap(containerId = 'map') {
+    if (map || leafletMap) return;
+
+    if (typeof google === 'undefined' || !google.maps) {
+      console.warn('Google Maps API missing or pending, initializing Leaflet engine fallback...');
+      fallbackToLeafletMap(containerId);
+      return;
+    }
+
+    try {
+      const mapOptions = {
+        center: { lat: currentPickup.lat, lng: currentPickup.lng },
+        zoom: 14,
+        disableDefaultUI: true,
+        zoomControl: true,
+        styles: GOOGLE_DARK_STYLE
+      };
+
+      map = new google.maps.Map(document.getElementById(containerId), mapOptions);
+
+      map.addListener('click', function (e) {
+        const lat = parseFloat(e.latLng.lat().toFixed(4));
+        const lng = parseFloat(e.latLng.lng().toFixed(4));
+        const customAddr = `Selected Location (${lat}, ${lng})`;
+
+        if (window.WheeloApp && window.WheeloApp.getMapSelectMode() === 'stop') {
+          setIntermediateStop(lat, lng, customAddr);
+        } else if (window.WheeloApp && window.WheeloApp.getMapSelectMode() === 'drop') {
+          setDropLocation(lat, lng, customAddr);
+        } else {
+          setPickupLocation(lat, lng, customAddr);
+        }
+        if (window.WheeloApp) window.WheeloApp.onLocationUpdated();
+      });
+
+      locateUserGPS(false);
+      updatePickupMarker();
+      updateDropMarker();
+      spawnNearbyDrivers();
+      calculateAndDrawRoute();
+    } catch (err) {
+      console.warn('Google Maps initialization caught error:', err);
+      fallbackToLeafletMap(containerId);
+    }
   }
 
   function switchMapLayer(layerName) {
@@ -245,18 +306,29 @@ const WheeloMap = (function () {
   }
 
   function updatePickupMarker() {
+    if (isLeafletMode && leafletMap) {
+      if (leafletPickupMarker) leafletMap.removeLayer(leafletPickupMarker);
+      leafletPickupMarker = L.marker([currentPickup.lat, currentPickup.lng], {
+        title: 'Pickup: ' + currentPickup.address
+      }).addTo(leafletMap);
+      return;
+    }
     if (!map) return;
     if (pickupMarker) pickupMarker.setMap(null);
 
     pickupMarker = new google.maps.Marker({
       position: { lat: currentPickup.lat, lng: currentPickup.lng },
       map: map,
-      icon: createSvgIcon('#10B981', 'A'),
+      icon: createSvgIcon('#00E676', 'A'),
       title: 'Pickup: ' + currentPickup.address
     });
   }
 
   function updateStopMarker() {
+    if (isLeafletMode && leafletMap && currentIntermediateStop) {
+      L.marker([currentIntermediateStop.lat, currentIntermediateStop.lng], { title: 'Stop: ' + currentIntermediateStop.address }).addTo(leafletMap);
+      return;
+    }
     if (!map || !currentIntermediateStop) return;
     if (stopMarker) stopMarker.setMap(null);
 
@@ -269,21 +341,26 @@ const WheeloMap = (function () {
   }
 
   function updateDropMarker() {
+    if (isLeafletMode && leafletMap) {
+      if (leafletDropMarker) leafletMap.removeLayer(leafletDropMarker);
+      leafletDropMarker = L.marker([currentDrop.lat, currentDrop.lng], {
+        title: 'Drop: ' + currentDrop.address
+      }).addTo(leafletMap);
+      return;
+    }
     if (!map) return;
     if (dropMarker) dropMarker.setMap(null);
 
     dropMarker = new google.maps.Marker({
       position: { lat: currentDrop.lat, lng: currentDrop.lng },
       map: map,
-      icon: createSvgIcon('#EF4444', 'B'),
+      icon: createSvgIcon('#FFFFFF', 'B'),
       title: 'Drop: ' + currentDrop.address
     });
   }
 
   function calculateAndDrawRoute() {
-    if (!map || !currentPickup || !currentDrop) return null;
-
-    if (routePolyline) routePolyline.setMap(null);
+    if (!currentPickup || !currentDrop) return null;
 
     let waypoints = [];
     const pStart = [currentPickup.lat, currentPickup.lng];
@@ -298,20 +375,27 @@ const WheeloMap = (function () {
       waypoints = generateWaypoints(pStart, pEnd, 25);
     }
 
-    const gPath = waypoints.map(pt => ({ lat: pt[0], lng: pt[1] }));
+    if (isLeafletMode && leafletMap) {
+      if (leafletRoutePolyline) leafletMap.removeLayer(leafletRoutePolyline);
+      leafletRoutePolyline = L.polyline(waypoints, { color: '#00E676', weight: 5, opacity: 0.9 }).addTo(leafletMap);
+      leafletMap.fitBounds(leafletRoutePolyline.getBounds(), { padding: [30, 30] });
+    } else if (map && typeof google !== 'undefined' && google.maps) {
+      if (routePolyline) routePolyline.setMap(null);
+      const gPath = waypoints.map(pt => ({ lat: pt[0], lng: pt[1] }));
 
-    routePolyline = new google.maps.Polyline({
-      path: gPath,
-      geodesic: true,
-      strokeColor: '#FFD100',
-      strokeOpacity: 0.9,
-      strokeWeight: 6,
-      map: map
-    });
+      routePolyline = new google.maps.Polyline({
+        path: gPath,
+        geodesic: true,
+        strokeColor: '#00E676',
+        strokeOpacity: 0.9,
+        strokeWeight: 6,
+        map: map
+      });
 
-    const bounds = new google.maps.LatLngBounds();
-    gPath.forEach(pt => bounds.extend(pt));
-    map.fitBounds(bounds, 80);
+      const bounds = new google.maps.LatLngBounds();
+      gPath.forEach(pt => bounds.extend(pt));
+      map.fitBounds(bounds, 80);
+    }
 
     let totalStraightDist = 0;
     for (let i = 0; i < waypoints.length - 1; i++) {

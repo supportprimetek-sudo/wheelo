@@ -10,6 +10,11 @@ const db = require('./database');
 
 const PORT = process.env.PORT || 3000;
 
+// Root Directory Resolution (Supports local Windows, Render, Vercel, Railway)
+const ROOT_DIR = fs.existsSync(pathModule.join(__dirname, '..', 'index.html'))
+  ? pathModule.join(__dirname, '..')
+  : process.cwd();
+
 const server = http.createServer((req, res) => {
   const parsedUrl = url.parse(req.url, true);
   const path = parsedUrl.pathname;
@@ -47,6 +52,7 @@ const server = http.createServer((req, res) => {
         status: 'ONLINE',
         service: 'WHEELO Production Server',
         timestamp: new Date().toISOString(),
+        rootDir: ROOT_DIR,
         database: 'SQLite JSON Persistent Storage Engine'
       });
     }
@@ -229,11 +235,30 @@ const server = http.createServer((req, res) => {
       return sendJSON(200, kyc);
     }
 
-    // Static File Serving (Cross-Platform Linux & Windows Compatibility)
+    // Bulletproof Static File & SPA Fallback Handler
     let relativePath = path === '/' ? 'index.html' : path.replace(/^\/+/, '');
-    const absolutePath = pathModule.join(__dirname, '..', relativePath);
+    if (relativePath === 'admin') relativePath = 'admin.html';
 
-    const ext = pathModule.extname(absolutePath);
+    const candidatePaths = [
+      pathModule.join(ROOT_DIR, relativePath),
+      pathModule.join(__dirname, '..', relativePath),
+      pathModule.join(process.cwd(), relativePath)
+    ];
+
+    let targetFile = candidatePaths.find(p => fs.existsSync(p) && fs.statSync(p).isFile());
+
+    // SPA fallback if file not found and has no extension
+    if (!targetFile && !pathModule.extname(relativePath)) {
+      targetFile = candidatePaths.find(p => p.endsWith('index.html')) || pathModule.join(ROOT_DIR, 'index.html');
+    }
+
+    if (!targetFile || !fs.existsSync(targetFile)) {
+      console.warn(`[404] File Not Found: ${path} (Searched: ${candidatePaths.join(', ')})`);
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      return res.end('404 Not Found');
+    }
+
+    const ext = pathModule.extname(targetFile);
     const mimeTypes = {
       '.html': 'text/html',
       '.js': 'text/javascript',
@@ -244,11 +269,10 @@ const server = http.createServer((req, res) => {
       '.svg': 'image/svg+xml'
     };
 
-    fs.readFile(absolutePath, (err, content) => {
+    fs.readFile(targetFile, (err, content) => {
       if (err) {
-        console.warn(`File Not Found [404]: ${absolutePath}`);
-        res.writeHead(404, { 'Content-Type': 'text/plain' });
-        res.end('404 Not Found');
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.end('500 Internal Server Error');
       } else {
         res.writeHead(200, { 'Content-Type': mimeTypes[ext] || 'text/plain' });
         res.end(content);
@@ -260,6 +284,7 @@ const server = http.createServer((req, res) => {
 server.listen(PORT, () => {
   console.log(`==================================================`);
   console.log(` WHEELO Backend Server Listening on Port ${PORT} `);
+  console.log(` Root Directory: ${ROOT_DIR} `);
   console.log(` Health Check: http://localhost:${PORT}/api/health `);
   console.log(` Admin Dashboard: http://localhost:${PORT}/api/admin/dashboard `);
   console.log(`==================================================`);

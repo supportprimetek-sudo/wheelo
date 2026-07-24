@@ -131,8 +131,10 @@ const WheeloApp = (function () {
     btnRiderMode.addEventListener('click', () => setMode('rider'));
     btnCaptainMode.addEventListener('click', () => setMode('captain'));
 
-    document.getElementById('wallet-badge-btn').addEventListener('click', openWalletModal);
-    document.getElementById('sos-btn').addEventListener('click', openSOSModal);
+    const walletBtn = document.getElementById('wallet-badge-btn');
+    if (walletBtn) walletBtn.addEventListener('click', openWalletModal);
+    const sosBtn = document.getElementById('sos-btn');
+    if (sosBtn) sosBtn.addEventListener('click', openSOSModal);
 
     const soundBtn = document.getElementById('btn-sound-toggle');
     if (soundBtn) {
@@ -856,8 +858,10 @@ const WheeloApp = (function () {
 
   function updateWalletDisplay() {
     const bal = WheeloPricing.getWalletBalance().toFixed(2);
-    document.getElementById('header-wallet-bal').textContent = `₹${bal}`;
-    document.getElementById('modal-wallet-bal').textContent = `₹${bal}`;
+    const headerBal = document.getElementById('header-wallet-bal');
+    if (headerBal) headerBal.textContent = `₹${bal}`;
+    const modalBal = document.getElementById('modal-wallet-bal');
+    if (modalBal) modalBal.textContent = `₹${bal}`;
 
     const container = document.getElementById('wallet-txn-list');
     if (!container) return;

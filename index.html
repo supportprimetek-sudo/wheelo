@@ -75,11 +75,6 @@
           <i class="fas fa-volume-high"></i>
         </button>
 
-        <div id="wallet-badge-btn" class="wallet-badge">
-          <i class="fas fa-wallet"></i>
-          <span id="header-wallet-bal">₹650.00</span>
-        </div>
-
         <button id="sos-btn" class="btn-sos">
           <i class="fas fa-triangle-exclamation"></i> SOS
         </button>
@@ -191,10 +186,10 @@
               <!-- Payment Selector -->
               <div class="payment-selector">
                 <div style="display: flex; align-items: center; gap: 10px;">
-                  <i class="fas fa-wallet" style="color: var(--primary)"></i>
+                  <i class="fas fa-money-bill-wave" style="color: var(--primary)"></i>
                   <div>
-                    <div style="font-size: 12px; font-weight: 700;">Paying via Wheelo Wallet / UPI</div>
-                    <div style="font-size: 10px; color: var(--text-muted)">Auto-deduct or UPI QR Code</div>
+                    <div style="font-size: 12px; font-weight: 800; color: var(--text-main);">Paying via Cash / Direct UPI</div>
+                    <div style="font-size: 10px; color: var(--text-muted)">Pay driver directly after trip completion</div>
                   </div>
                 </div>
                 <button id="btn-trigger-upi-qr" class="btn-secondary" style="font-size: 11px; padding: 4px 8px;">
@@ -539,43 +534,7 @@
   </div>
 
 
-  <!-- WALLET MODAL -->
-  <div id="modal-wallet" class="modal-overlay">
-    <div class="modal-card">
-      <button class="modal-close"><i class="fas fa-xmark"></i></button>
 
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <i class="fas fa-wallet" style="font-size: 24px; color: var(--primary);"></i>
-        <div>
-          <h3 style="font-family: var(--font-heading); font-size: 18px;">Wheelo Wallet</h3>
-          <p style="font-size: 11px; color: var(--text-muted);">Instant cashbacks & hassle-free payments</p>
-        </div>
-      </div>
-
-      <div style="background: rgba(255,209,0,0.1); border: 1px solid rgba(255,209,0,0.25); padding: 14px; border-radius: var(--radius-md); text-align: center;">
-        <div style="font-size: 11px; color: var(--text-muted);">CURRENT BALANCE</div>
-        <div id="modal-wallet-bal" style="font-family: var(--font-heading); font-size: 30px; font-weight: 900; color: var(--primary);">₹650.00</div>
-      </div>
-
-      <div style="display: flex; flex-direction: column; gap: 8px;">
-        <div class="section-label">Add Funds</div>
-        <div class="amount-grid">
-          <div class="amount-chip active" data-amount="100">+ ₹100</div>
-          <div class="amount-chip" data-amount="250">+ ₹250</div>
-          <div class="amount-chip" data-amount="500">+ ₹500</div>
-          <div class="amount-chip" data-amount="1000">+ ₹1000</div>
-        </div>
-
-        <input id="input-add-amount" type="number" class="location-input" value="100" placeholder="Custom Amount (₹)">
-        <button id="btn-submit-topup" class="btn-primary">ADD MONEY VIA GPAY / UPI</button>
-      </div>
-
-      <div style="display: flex; flex-direction: column; gap: 6px;">
-        <div class="section-label">Recent Transactions</div>
-        <div id="wallet-txn-list" style="max-height: 160px; overflow-y: auto;"></div>
-      </div>
-    </div>
-  </div>
 
 
   <!-- SOS EMERGENCY MODAL -->

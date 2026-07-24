@@ -247,33 +247,44 @@
         </div>
       </div>
 
-      <!-- DRIVER KYC ONBOARDING AUDIT DESK WITH DOCUMENT PREVIEWS -->
-      <div class="card">
-        <div class="section-title">
-          <div><i class="fas fa-id-badge" style="color: var(--success)"></i> Captain KYC Verification Desk</div>
-        </div>
-        <div id="kyc-driver-name" style="font-size: 12px; margin-bottom: 6px; font-weight: 700;">No Driver Submissions</div>
-        <div id="kyc-details-info" style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">
-          License: <strong id="kyc-license-text">None</strong> | RC: <strong id="kyc-rc-text">None</strong>
-        </div>
-
-        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-          <div style="flex:1; text-align:center;">
-            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">License Photo</div>
-            <img id="kyc-img-license" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='100' fill='%23121826'><rect width='100%' height='100%'/><text x='50%' y='50%' fill='%2394A3B8' dominant-baseline='middle' text-anchor='middle' font-size='12'>No Photo</text></svg>" style="width:100%; height:64px; object-fit:cover; border-radius:8px; border:1px solid var(--border-color);">
+      <!-- DRIVER KYC ONBOARDING AUDIT DESK (AUTO-EXPANDS ON PENDING VERIFICATIONS, COLLAPSED OTHERWISE) -->
+      <div id="card-kyc-desk" class="card" style="transition: all 0.3s ease;">
+        <div class="section-title" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none;" onclick="toggleKYCDesk()">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-id-badge" style="color: var(--success)"></i> Captain KYC Verification Desk
           </div>
-          <div style="flex:1; text-align:center;">
-            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">Vehicle RC Photo</div>
-            <img id="kyc-img-rc" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='100' fill='%23121826'><rect width='100%' height='100%'/><text x='50%' y='50%' fill='%2394A3B8' dominant-baseline='middle' text-anchor='middle' font-size='12'>No Photo</text></svg>" style="width:100%; height:64px; object-fit:cover; border-radius:8px; border:1px solid var(--border-color);">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span id="kyc-header-badge" style="font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 12px; background: rgba(255, 255, 255, 0.08); color: var(--text-muted);">
+              NO PENDING VERIFICATIONS
+            </span>
+            <i id="kyc-toggle-chevron" class="fas fa-chevron-down" style="font-size: 12px; color: var(--text-muted);"></i>
           </div>
         </div>
 
-        <div id="kyc-status-badge" style="font-size: 11px; margin-bottom: 12px; font-weight: 700; color: var(--text-muted); text-align: center;">
-          Current Status: NO PENDING KYC
-        </div>
-        <div style="display: flex; gap: 8px;">
-          <button class="btn btn-success" style="flex: 1;" onclick="updateKYC(true)">APPROVE</button>
-          <button class="btn btn-danger" style="flex: 1;" onclick="updateKYC(false)">REJECT / REVOKE</button>
+        <div id="kyc-collapsible-body" style="display: none; margin-top: 12px;">
+          <div id="kyc-driver-name" style="font-size: 12px; margin-bottom: 6px; font-weight: 700;">No Driver Submissions</div>
+          <div id="kyc-details-info" style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">
+            License: <strong id="kyc-license-text">None</strong> | RC: <strong id="kyc-rc-text">None</strong>
+          </div>
+
+          <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+            <div style="flex:1; text-align:center;">
+              <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">License Photo</div>
+              <img id="kyc-img-license" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='100' fill='%23121826'><rect width='100%' height='100%'/><text x='50%' y='50%' fill='%2394A3B8' dominant-baseline='middle' text-anchor='middle' font-size='12'>No Photo</text></svg>" style="width:100%; height:64px; object-fit:cover; border-radius:8px; border:1px solid var(--border-color);">
+            </div>
+            <div style="flex:1; text-align:center;">
+              <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">Vehicle RC Photo</div>
+              <img id="kyc-img-rc" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='100' fill='%23121826'><rect width='100%' height='100%'/><text x='50%' y='50%' fill='%2394A3B8' dominant-baseline='middle' text-anchor='middle' font-size='12'>No Photo</text></svg>" style="width:100%; height:64px; object-fit:cover; border-radius:8px; border:1px solid var(--border-color);">
+            </div>
+          </div>
+
+          <div id="kyc-status-badge" style="font-size: 11px; margin-bottom: 12px; font-weight: 700; color: var(--text-muted); text-align: center;">
+            Current Status: NO PENDING KYC
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-success" style="flex: 1;" onclick="updateKYC(true)">APPROVE</button>
+            <button class="btn btn-danger" style="flex: 1;" onclick="updateKYC(false)">REJECT / REVOKE</button>
+          </div>
         </div>
       </div>
     </div>
@@ -299,6 +310,18 @@
   </div>
 
   <script>
+    function toggleKYCDesk(forceExpand = null) {
+      const body = document.getElementById('kyc-collapsible-body');
+      const chevron = document.getElementById('kyc-toggle-chevron');
+      if (!body) return;
+
+      const isHidden = body.style.display === 'none';
+      const shouldExpand = forceExpand !== null ? forceExpand : isHidden;
+
+      body.style.display = shouldExpand ? 'block' : 'none';
+      if (chevron) chevron.className = shouldExpand ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+    }
+
     async function loadAdminTelemetry() {
       try {
         const res = await fetch('/api/admin/dashboard');
@@ -317,17 +340,54 @@
         document.getElementById('user-count-badge').innerHTML = `<i class="fas fa-user-check"></i> ${userCount} Registered Users`;
 
         const kycBadge = document.getElementById('kyc-status-badge');
-        if (data.kycDetails) {
+        const headerBadge = document.getElementById('kyc-header-badge');
+        const kycCard = document.getElementById('card-kyc-desk');
+
+        const hasPendingKyc = data.kycDetails && (data.kycDetails.status === 'PENDING_VERIFICATION' || !data.kycDetails.verified);
+
+        if (hasPendingKyc) {
+          // AUTO-EXPAND ON PENDING VERIFICATION REQUEST
+          toggleKYCDesk(true);
+          if (kycCard) kycCard.style.borderColor = 'var(--danger)';
+          if (headerBadge) {
+            headerBadge.textContent = 'ACTION REQUIRED - 1 PENDING VERIFICATION';
+            headerBadge.style.background = 'rgba(239, 68, 68, 0.2)';
+            headerBadge.style.color = 'var(--danger)';
+          }
+
           document.getElementById('kyc-driver-name').textContent = data.kycDetails.driver_name || 'Captain Driver';
           document.getElementById('kyc-license-text').textContent = data.kycDetails.license_no || 'None';
           document.getElementById('kyc-rc-text').textContent = data.kycDetails.rc_no || 'None';
           if (data.kycDetails.license_doc) document.getElementById('kyc-img-license').src = data.kycDetails.license_doc;
           if (data.kycDetails.rc_doc) document.getElementById('kyc-img-rc').src = data.kycDetails.rc_doc;
 
-          const isVerified = data.kycDetails.verified || data.kycDetails.status === 'VERIFIED';
-          kycBadge.textContent = isVerified ? 'Current Status: VERIFIED & APPROVED' : 'Current Status: PENDING VERIFICATION';
-          kycBadge.style.color = isVerified ? 'var(--success)' : 'var(--danger)';
+          kycBadge.textContent = 'Current Status: PENDING VERIFICATION';
+          kycBadge.style.color = 'var(--danger)';
+        } else if (data.kycDetails && data.kycDetails.verified) {
+          // COLLAPSE BY DEFAULT WHEN VERIFIED / APPROVED
+          toggleKYCDesk(false);
+          if (kycCard) kycCard.style.borderColor = 'var(--border-color)';
+          if (headerBadge) {
+            headerBadge.textContent = 'ALL VERIFIED (APPROVED)';
+            headerBadge.style.background = 'rgba(16, 185, 129, 0.15)';
+            headerBadge.style.color = 'var(--success)';
+          }
+
+          document.getElementById('kyc-driver-name').textContent = data.kycDetails.driver_name || 'Captain Driver';
+          document.getElementById('kyc-license-text').textContent = data.kycDetails.license_no || 'None';
+          document.getElementById('kyc-rc-text').textContent = data.kycDetails.rc_no || 'None';
+          kycBadge.textContent = 'Current Status: VERIFIED & APPROVED';
+          kycBadge.style.color = 'var(--success)';
         } else {
+          // COLLAPSE BY DEFAULT WHEN NO SUBMISSIONS
+          toggleKYCDesk(false);
+          if (kycCard) kycCard.style.borderColor = 'var(--border-color)';
+          if (headerBadge) {
+            headerBadge.textContent = 'NO PENDING VERIFICATIONS';
+            headerBadge.style.background = 'rgba(255, 255, 255, 0.08)';
+            headerBadge.style.color = 'var(--text-muted)';
+          }
+
           document.getElementById('kyc-driver-name').textContent = 'No Driver Submissions';
           document.getElementById('kyc-license-text').textContent = 'None';
           document.getElementById('kyc-rc-text').textContent = 'None';

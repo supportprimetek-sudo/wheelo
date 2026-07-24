@@ -80,13 +80,16 @@
 
     <!-- Main Workspace -->
     <main class="main-workspace">
-      <div id="map"></div>
+      <!-- Floating Card Map View (Not Full Screen) -->
+      <div class="map-card-wrapper">
+        <div id="map"></div>
 
-      <!-- Google Maps Layer Switcher Overlay -->
-      <div class="map-style-overlay">
-        <button class="layer-btn active" data-layer="googleDark"><i class="fas fa-moon"></i> Dark</button>
-        <button class="layer-btn" data-layer="googleRoadmap"><i class="fas fa-map"></i> Google Maps</button>
-        <button class="layer-btn" data-layer="googleSatellite"><i class="fas fa-earth-americas"></i> Satellite</button>
+        <!-- Google Maps Layer Switcher Overlay -->
+        <div class="map-style-overlay">
+          <button class="layer-btn active" data-layer="googleDark"><i class="fas fa-moon"></i> Dark</button>
+          <button class="layer-btn" data-layer="googleRoadmap"><i class="fas fa-map"></i> Google Maps</button>
+          <button class="layer-btn" data-layer="googleSatellite"><i class="fas fa-earth-americas"></i> Satellite</button>
+        </div>
       </div>
 
       <div class="app-drawer">

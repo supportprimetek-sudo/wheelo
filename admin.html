@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WHEELO - Standalone Admin Operations Control Center</title>
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <!-- Outfit & Plus Jakarta Sans Google Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap">
+
+  <style>
+    :root {
+      --bg-primary: #0A0E17;
+      --bg-surface: #121826;
+      --bg-card: rgba(22, 30, 46, 0.85);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --primary: #FFD100;
+      --secondary: #00F0FF;
+      --success: #10B981;
+      --danger: #EF4444;
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background: var(--bg-primary); color: var(--text-main); min-height: 100vh; padding: 24px; }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 24px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .logo-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--secondary) 0%, #0088FF 100%);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: #000; font-size: 20px; font-weight: 900;
+    }
+
+    .badge-live {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid var(--success);
+      color: var(--success);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-pulse {
+      width: 8px; height: 8px; background: var(--success); border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    .card .label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+    .card .val { font-family: 'Outfit', sans-serif; font-size: 32px; font-weight: 800; color: var(--primary); margin-top: 4px; }
+
+    .section-title { font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; justify-content: space-between; }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th { text-align: left; padding: 12px; font-size: 11px; color: var(--text-muted); border-bottom: 1px solid var(--border-color); text-transform: uppercase; }
+    td { padding: 12px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    tr:hover { background: rgba(255,255,255,0.02); }
+
+    input.input-num {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-color);
+      color: var(--primary);
+      font-weight: 700;
+      width: 70px;
+      padding: 6px;
+      border-radius: 6px;
+      outline: none;
+    }
+
+    .status-tag { padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; display: inline-block; }
+    .status-searching { background: rgba(255, 209, 0, 0.2); color: var(--primary); }
+    .status-completed { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+
+    .btn { background: var(--primary); color: #000; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-secondary { background: rgba(255,255,255,0.08); color: white; border: 1px solid var(--border-color); }
+    .btn-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+    .btn-success { background: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid var(--success); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <div class="logo-icon"><i class="fas fa-shield-halved"></i></div>
+      WHEELO Admin Operations Portal
+    </div>
+
+    <div style="display: flex; gap: 12px; align-items: center;">
+      <div class="badge-live">
+        <div class="badge-pulse"></div> REAL-TIME SYSTEM LIVE
+      </div>
+      <a href="index.html" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Open Main App</a>
+    </div>
+  </header>
+
+  <!-- Metrics Grid -->
+  <div class="grid-4">
+    <div class="card">
+      <div class="label">Gross Platform Revenue</div>
+      <div id="stat-revenue" class="val">₹4,850</div>
+    </div>
+    <div class="card">
+      <div class="label">Net Commission (20%)</div>
+      <div id="stat-commission" class="val" style="color: var(--success)">₹970</div>
+    </div>
+    <div class="card">
+      <div class="label">Total Trips Booked</div>
+      <div id="stat-trips" class="val" style="color: var(--secondary)">14</div>
+    </div>
+    <div class="card">
+      <div class="label">Active Online Captains</div>
+      <div id="stat-captains" class="val" style="color: #A855F7">8 Drivers</div>
+    </div>
+  </div>
+
+  <!-- VEHICLE FLEET & PRICE CRUD TABLE -->
+  <div class="card" style="margin-bottom: 24px;">
+    <div class="section-title">
+      <div><i class="fas fa-car-side" style="color: var(--primary)"></i> Vehicle Category Tariffs & Price Management</div>
+      <button class="btn" onclick="openAddVehicleModal()"><i class="fas fa-plus"></i> ADD NEW VEHICLE CATEGORY</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Base Fare (₹)</th>
+          <th>Per KM Rate (₹/km)</th>
+          <th>Per Min Rate (₹)</th>
+          <th>Min Fare (₹)</th>
+          <th>Capacity</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="admin-vehicles-tbody">
+        <!-- Loaded dynamically -->
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid-4" style="grid-template-columns: 2fr 1fr;">
+    <!-- Live Platform Rides Monitor -->
+    <div class="card">
+      <div class="section-title">
+        <div><i class="fas fa-list-check" style="color: var(--secondary)"></i> Live Rides Operations Monitor</div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Ride ID</th>
+            <th>Category</th>
+            <th>Pickup ➔ Drop</th>
+            <th>Fare</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="admin-rides-tbody">
+          <!-- Loaded dynamically via REST API -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- System Telemetry & Driver Audit Desk -->
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <div class="card">
+        <div class="section-title">
+          <div><i class="fas fa-server" style="color: var(--primary)"></i> Backend Telemetry</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
+          <div style="display: flex; justify-content: space-between;"><span>Server Status:</span><strong style="color: var(--success)">ONLINE (Port 3000)</strong></div>
+          <div style="display: flex; justify-content: space-between;"><span>Database Engine:</span><strong>SQLite JSON (wheelo.db.json)</strong></div>
+          <div style="display: flex; justify-content: space-between;"><span>Uptime:</span><strong id="stat-uptime">120 secs</strong></div>
+          <div style="display: flex; justify-content: space-between;"><span>API Endpoint:</span><a href="/api/admin/dashboard" target="_blank" style="color: var(--secondary)">/api/admin/dashboard</a></div>
+        </div>
+      </div>
+
+      <!-- DRIVER KYC ONBOARDING AUDIT DESK WITH DOCUMENT PREVIEWS -->
+      <div class="card">
+        <div class="section-title">
+          <div><i class="fas fa-id-badge" style="color: var(--success)"></i> Captain KYC Verification Desk</div>
+        </div>
+        <div style="font-size: 12px; margin-bottom: 6px;">Captain Ramesh Kumar</div>
+        <div id="kyc-details-info" style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">
+          License: <strong id="kyc-license-text">DL-0420210089421</strong> | RC: <strong id="kyc-rc-text">KA-05-EV-4890</strong>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+          <div style="flex:1; text-align:center;">
+            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">License Photo</div>
+            <img id="kyc-img-license" src="https://images.unsplash.com/photo-1544717305-2782549b5136?w=200" style="width:100%; height:64px; object-fit:cover; border-radius:8px; border:1px solid var(--border-color);">
+          </div>
+          <div style="flex:1; text-align:center;">
+            <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px;">Vehicle RC Photo</div>
+            <img id="kyc-img-rc" src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=200" style="width:100%; height:64px; object-fit:cover; border-radius:8px; border:1px solid var(--border-color);">
+          </div>
+        </div>
+
+        <div id="kyc-status-badge" style="font-size: 11px; margin-bottom: 12px; font-weight: 700; color: var(--success); text-align: center;">
+          Current Status: VERIFIED & APPROVED
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-success" style="flex: 1;" onclick="updateKYC(true)">APPROVE</button>
+          <button class="btn btn-danger" style="flex: 1;" onclick="updateKYC(false)">REJECT / REVOKE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD VEHICLE MODAL -->
+  <div id="modal-add-vehicle" style="position: fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(5,8,15,0.85); display:none; align-items:center; justify-content:center; z-index:2000;">
+    <div class="card" style="width: 100%; max-width: 420px; position: relative;">
+      <button onclick="document.getElementById('modal-add-vehicle').style.display='none'" style="position:absolute; top:16px; right:16px; background:transparent; border:none; color:white; font-size:18px; cursor:pointer;"><i class="fas fa-xmark"></i></button>
+      <h3 style="font-family: 'Outfit', sans-serif; margin-bottom: 14px;">Add New Vehicle Category</h3>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <input id="new-veh-id" type="text" placeholder="Category ID (e.g. suv)" class="input-num" style="width: 100%;">
+        <input id="new-veh-name" type="text" placeholder="Category Name (e.g. Wheelo SUV)" class="input-num" style="width: 100%;">
+        <input id="new-veh-base" type="number" placeholder="Base Fare (₹)" class="input-num" style="width: 100%;">
+        <input id="new-veh-perkm" type="number" placeholder="Per KM Rate (₹/km)" class="input-num" style="width: 100%;">
+        <input id="new-veh-min" type="number" placeholder="Minimum Fare (₹)" class="input-num" style="width: 100%;">
+        <input id="new-veh-cap" type="text" placeholder="Capacity (e.g. 6 Passengers)" class="input-num" style="width: 100%;">
+
+        <button class="btn" style="margin-top: 10px;" onclick="submitNewVehicle()">CREATE VEHICLE CATEGORY</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function loadAdminTelemetry() {
+      try {
+        const res = await fetch('/api/admin/dashboard');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!data || !data.stats) return;
+
+        document.getElementById('stat-revenue').textContent = `₹${data.stats.grossRevenue}`;
+        document.getElementById('stat-commission').textContent = `₹${data.stats.netCommission}`;
+        document.getElementById('stat-trips').textContent = data.stats.totalRides;
+        document.getElementById('stat-captains').textContent = `${data.stats.onlineCaptains} Drivers`;
+        document.getElementById('stat-uptime').textContent = data.stats.serverUptime;
+
+        const kycBadge = document.getElementById('kyc-status-badge');
+        if (data.kycDetails) {
+          document.getElementById('kyc-license-text').textContent = data.kycDetails.license_no || 'DL-0420210089421';
+          document.getElementById('kyc-rc-text').textContent = data.kycDetails.rc_no || 'KA-05-EV-4890';
+          if (data.kycDetails.license_doc) document.getElementById('kyc-img-license').src = data.kycDetails.license_doc;
+          if (data.kycDetails.rc_doc) document.getElementById('kyc-img-rc').src = data.kycDetails.rc_doc;
+
+          const isVerified = data.kycDetails.verified || data.kycDetails.status === 'VERIFIED';
+          kycBadge.textContent = isVerified ? 'Current Status: VERIFIED & APPROVED' : 'Current Status: PENDING / REJECTED';
+          kycBadge.style.color = isVerified ? 'var(--success)' : 'var(--danger)';
+        }
+
+        renderVehiclesTable(data.vehicles || []);
+
+        const tbody = document.getElementById('admin-rides-tbody');
+        tbody.innerHTML = '';
+        
+        if (!data.recentRides || data.recentRides.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No platform rides logged yet</td></tr>';
+          return;
+        }
+
+        data.recentRides.forEach(r => {
+          const tr = document.createElement('tr');
+          const statusClass = r.status === 'COMPLETED' ? 'status-completed' : 'status-searching';
+          tr.innerHTML = `
+            <td><strong>${r.id}</strong></td>
+            <td><span style="text-transform: uppercase;">${r.vehicle_type || r.vehicleId || 'BIKE'}</span></td>
+            <td>
+              <div style="font-weight: 700;">${r.pickup ? (r.pickup.address || 'Pickup') : 'MG Road Metro'}</div>
+              <div style="font-size: 11px; color: var(--text-muted);">➔ ${r.drop ? (r.drop.address || 'Drop') : 'Indiranagar 100ft Road'}</div>
+            </td>
+            <td><strong style="color: var(--primary)">₹${r.fare ? r.fare.finalFare : 45}</strong></td>
+            <td><span class="status-tag ${statusClass}">${r.status}</span></td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (e) {
+        console.warn('Admin dashboard polling exception:', e);
+      }
+    }
+
+    function renderVehiclesTable(vehicles) {
+      const tbody = document.getElementById('admin-vehicles-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      vehicles.forEach(v => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <div style="font-weight:700; color:var(--text-main)"><i class="fas ${v.icon || 'fa-car'}"></i> ${v.name}</div>
+            <div style="font-size:10px; color:var(--text-muted)">ID: ${v.id}</div>
+          </td>
+          <td><input id="base-${v.id}" type="number" value="${v.baseFare}" class="input-num"></td>
+          <td><input id="perkm-${v.id}" type="number" value="${v.perKmRate}" class="input-num"></td>
+          <td><input id="permin-${v.id}" type="number" value="${v.perMinRate}" class="input-num"></td>
+          <td><input id="min-${v.id}" type="number" value="${v.minFare}" class="input-num"></td>
+          <td>${v.capacity}</td>
+          <td>
+            <div style="display:flex; gap:6px;">
+              <button class="btn btn-success" style="padding:4px 8px; font-size:11px;" onclick="saveVehiclePrice('${v.id}')">SAVE</button>
+              <button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="deleteVehicleCategory('${v.id}')">DELETE</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function saveVehiclePrice(id) {
+      const baseFare = parseFloat(document.getElementById(`base-${id}`).value);
+      const perKmRate = parseFloat(document.getElementById(`perkm-${id}`).value);
+      const perMinRate = parseFloat(document.getElementById(`permin-${id}`).value);
+      const minFare = parseFloat(document.getElementById(`min-${id}`).value);
+
+      const res = await fetch('/api/admin/vehicles/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, vehicleData: { baseFare, perKmRate, perMinRate, minFare } })
+      });
+      if (res.ok) {
+        alert(`Successfully updated tariffs for ${id}! Main app pricing updated.`);
+        loadAdminTelemetry();
+      }
+    }
+
+    async function deleteVehicleCategory(id) {
+      if (!confirm(`Are you sure you want to delete vehicle category "${id}"?`)) return;
+      const res = await fetch('/api/admin/vehicles/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+      if (res.ok) {
+        alert(`Deleted category ${id}.`);
+        loadAdminTelemetry();
+      }
+    }
+
+    function openAddVehicleModal() {
+      document.getElementById('modal-add-vehicle').style.display = 'flex';
+    }
+
+    async function submitNewVehicle() {
+      const id = document.getElementById('new-veh-id').value;
+      const name = document.getElementById('new-veh-name').value;
+      const baseFare = document.getElementById('new-veh-base').value;
+      const perKmRate = document.getElementById('new-veh-perkm').value;
+      const minFare = document.getElementById('new-veh-min').value;
+      const capacity = document.getElementById('new-veh-cap').value;
+
+      if (!id || !name) {
+        alert('Please fill out Category ID and Name.');
+        return;
+      }
+
+      const res = await fetch('/api/admin/vehicles/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, name, baseFare, perKmRate, minFare, capacity })
+      });
+
+      if (res.ok) {
+        document.getElementById('modal-add-vehicle').style.display = 'none';
+        alert(`Created new vehicle category "${name}"!`);
+        loadAdminTelemetry();
+      }
+    }
+
+    async function updateKYC(verified) {
+      const res = await fetch('/api/admin/kyc/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ verified })
+      });
+      if (res.ok) {
+        alert(`Captain KYC Verification status set to ${verified ? 'APPROVED' : 'REJECTED'}.`);
+        loadAdminTelemetry();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadAdminTelemetry();
+      setInterval(loadAdminTelemetry, 5000);
+    });
+  </script>
+</body>
+</html>

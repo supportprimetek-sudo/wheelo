@@ -1,0 +1,26 @@
+{
+  "name": "WHEELO - Ride Hailing & Mobility App",
+  "short_name": "WHEELO",
+  "description": "Enterprise Rapido-like Ride Hailing Application with Live Tracking, Fast Booking & Wallet",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0A0E17",
+  "theme_color": "#0A0E17",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22192%22%20height%3D%22192%22%20viewBox%3D%220%200%20192%20192%22%3E%3Crect%20width%3D%22192%22%20height%3D%22192%22%20rx%3D%2240%22%20fill%3D%22%230A0E17%22%2F%3E%3Cpath%20d%3D%22M110%2020L40%20110h50l-10%2062%2070-90h-50z%22%20fill%3D%22%23FFD100%22%2F%3E%3C%2Fsvg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22512%22%20height%3D%22512%22%20viewBox%3D%220%200%20512%20512%22%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20rx%3D%22100%22%20fill%3D%22%230A0E17%22%2F%3E%3Cpath%20d%3D%22M290%2040L100%20290h140l-30%20182%20190-250H260z%22%20fill%3D%22%23FFD100%22%2F%3E%3C%2Fsvg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["travel", "navigation", "transportation"]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "wheelo",
+  "version": "1.0.0",
+  "description": "Enterprise Mobility & Ride Hailing Application with Live Tracking, Fast Booking, PWA & Admin Portal",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node server/server.js"
+  },
+  "keywords": [
+    "ride-hailing",
+    "mobility",
+    "rapido-clone",
+    "pwa",
+    "google-maps",
+    "admin-dashboard"
+  ],
+  "author": "WHEELO Team",
+  "license": "ISC"
+}

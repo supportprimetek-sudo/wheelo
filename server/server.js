@@ -4,6 +4,8 @@
 
 const http = require('http');
 const url = require('url');
+const fs = require('fs');
+const pathModule = require('path');
 const db = require('./database');
 
 const PORT = process.env.PORT || 3000;
@@ -227,13 +229,9 @@ const server = http.createServer((req, res) => {
       return sendJSON(200, kyc);
     }
 
-    // Static File Serving
-    const fs = require('fs');
-    const pathModule = require('path');
-
-    let filePath = path === '/' ? '/index.html' : path;
-    const safePath = pathModule.normalize(filePath).replace(/^(\.\.[\/\\])+/, '');
-    const absolutePath = pathModule.join(__dirname, '..', safePath);
+    // Static File Serving (Cross-Platform Linux & Windows Compatibility)
+    let relativePath = path === '/' ? 'index.html' : path.replace(/^\/+/, '');
+    const absolutePath = pathModule.join(__dirname, '..', relativePath);
 
     const ext = pathModule.extname(absolutePath);
     const mimeTypes = {
@@ -248,6 +246,7 @@ const server = http.createServer((req, res) => {
 
     fs.readFile(absolutePath, (err, content) => {
       if (err) {
+        console.warn(`File Not Found [404]: ${absolutePath}`);
         res.writeHead(404, { 'Content-Type': 'text/plain' });
         res.end('404 Not Found');
       } else {

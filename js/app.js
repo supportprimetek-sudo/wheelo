@@ -55,6 +55,37 @@ const WheeloApp = (function () {
 
     container.innerHTML = '<div class="section-label">Select Vehicle Category</div>';
 
+    if (!list || list.length === 0) {
+      const emptyBox = document.createElement('div');
+      emptyBox.style.cssText = 'padding: 12px; text-align: center; color: var(--text-muted); font-size: 11px; background: rgba(0,230,118,0.06); border-radius: var(--radius-md); border: 1px dashed var(--border-color); margin-top: 6px;';
+      emptyBox.innerHTML = `
+        <i class="fas fa-motorcycle" style="font-size: 22px; color: var(--primary); margin-bottom: 4px; display: block;"></i>
+        <div style="font-weight: 700; color: var(--text-main); font-size: 12px;">No Active Vehicles Found</div>
+        <div style="font-size: 10px; margin-top: 2px;">Add categories in Admin Portal or click below to seed defaults</div>
+        <button id="btn-seed-vehicles-quick" style="margin-top: 8px; background: linear-gradient(135deg, #00E676 0%, #00C853 100%); color: #000; border: none; padding: 6px 14px; border-radius: 14px; font-weight: 900; font-size: 10px; cursor: pointer;">+ SEED DEFAULT FLEET</button>
+      `;
+      container.appendChild(emptyBox);
+
+      setTimeout(() => {
+        const btnSeed = document.getElementById('btn-seed-vehicles-quick');
+        if (btnSeed) {
+          btnSeed.onclick = async () => {
+            btnSeed.textContent = 'SEEDING...';
+            const defaults = [
+              { id: 'bike', name: 'Wheelo Bike', baseFare: 15, perKmRate: 5, perMinRate: 1.0, minFare: 25, capacity: '1 Rider', icon: 'fa-motorcycle', badge: 'FASTEST' },
+              { id: 'auto', name: 'Wheelo Auto', baseFare: 20, perKmRate: 5, perMinRate: 1.5, minFare: 35, capacity: '3 Passengers', icon: 'fa-taxi', badge: 'POPULAR' },
+              { id: 'cab', name: 'Economy Cab', baseFare: 30, perKmRate: 5, perMinRate: 2.0, minFare: 50, capacity: '4 Passengers', icon: 'fa-car-side', badge: 'AC' }
+            ];
+            for (let v of defaults) {
+              await WheeloAPI.addVehicle(v).catch(() => {});
+            }
+            syncAndRenderVehicleCards();
+          };
+        }
+      }, 100);
+      return;
+    }
+
     list.forEach((v, idx) => {
       const isSel = v.id === selectedVehicle || idx === 0;
       if (isSel) selectedVehicle = v.id;

@@ -339,8 +339,31 @@ header.app-header {
 
 .payment-selector { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
 
-.btn-confirm-ride { background: linear-gradient(135deg, var(--primary) 0%, #00C853 100%); color: #000; border: none; padding: 12px; border-radius: var(--radius-md); font-family: var(--font-heading); font-size: 15px; font-weight: 900; cursor: pointer; width: 100%; box-shadow: 0 4px 20px var(--primary-glow); transition: var(--transition-fast); }
-.btn-confirm-ride:hover { transform: translateY(-2px); box-shadow: 0 6px 25px var(--primary-glow); }
+.btn-confirm-ride,
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, #00C853 100%) !important;
+  color: #000000 !important;
+  font-family: var(--font-heading);
+  font-size: 15px !important;
+  font-weight: 900 !important;
+  border: none !important;
+  padding: 14px !important;
+  border-radius: var(--radius-md) !important;
+  cursor: pointer;
+  width: 100%;
+  box-shadow: 0 4px 20px var(--primary-glow) !important;
+  transition: var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-transform: uppercase;
+}
+.btn-confirm-ride:hover,
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px var(--primary-glow) !important;
+}
 
 .active-ride-card { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 12px; display: flex; flex-direction: column; gap: 10px; }
 .status-header { display: flex; align-items: center; gap: 10px; }
@@ -464,5 +487,52 @@ header.app-header {
     border-left: none;
     border-right: none;
     max-width: 100%;
+  }
+
+  header.app-header {
+    padding: 0 8px;
+    height: 56px;
+  }
+
+  .brand-logo {
+    font-size: 16px;
+    gap: 6px;
+  }
+
+  .brand-logo .logo-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .mode-switcher {
+    padding: 2px;
+    gap: 2px;
+  }
+
+  .mode-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+
+  .header-actions {
+    gap: 6px;
+  }
+
+  .btn-icon-head {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+
+  .btn-sos {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  .profile-avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
   }
 }

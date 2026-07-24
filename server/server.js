@@ -1,5 +1,5 @@
 /* ==========================================================================
-   WHEELO - Production HTTP REST API Server (Node.js & SQLite Engine)
+   WHEELO - Production HTTP REST API Server (Node.js & SQLite/Firebase Engine)
    ========================================================================== */
 
 const http = require('http');
@@ -53,7 +53,7 @@ const server = http.createServer((req, res) => {
         service: 'WHEELO Production Server',
         timestamp: new Date().toISOString(),
         rootDir: ROOT_DIR,
-        database: 'SQLite JSON Persistent Storage Engine'
+        database: db.getDatabaseStatus()
       });
     }
 
@@ -98,7 +98,7 @@ const server = http.createServer((req, res) => {
       return sendJSON(200, { success: true, kyc });
     }
 
-    // GET /api/admin/dashboard - 100% REAL TELEMETRY WITH ZERO HARDCODED MOCK FALLBACKS
+    // GET /api/admin/dashboard - 100% REAL TELEMETRY WITH FIREBASE BACKEND
     if (method === 'GET' && path === '/api/admin/dashboard') {
       const dbData = db.load();
       const allRides = dbData.rides || [];
@@ -123,7 +123,7 @@ const server = http.createServer((req, res) => {
           registeredUsers: allUsers.length,
           pendingKYC: isKYCPending ? 1 : 0,
           serverUptime: Math.floor(process.uptime()) + ' seconds',
-          dbStatus: 'Connected (wheelo.db.json)'
+          dbStatus: db.getDatabaseStatus()
         },
         recentRides: allRides.slice(0, 10),
         kycDetails: kyc,

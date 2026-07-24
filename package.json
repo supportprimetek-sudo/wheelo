@@ -1,11 +1,14 @@
 {
   "name": "wheelo",
   "version": "1.0.0",
-  "description": "Enterprise Mobility & Ride Hailing Application with Live Tracking, Fast Booking, PWA & Admin Portal",
+  "description": "Enterprise Mobility & Ride Hailing Application with Live Tracking, Fast Booking, PWA, Admin Portal & Firebase Firestore Database",
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js",
     "dev": "node server/server.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
   },
   "keywords": [
     "ride-hailing",
@@ -13,7 +16,9 @@
     "rapido-clone",
     "pwa",
     "google-maps",
-    "admin-dashboard"
+    "admin-dashboard",
+    "firebase",
+    "firestore"
   ],
   "author": "WHEELO Team",
   "license": "ISC"

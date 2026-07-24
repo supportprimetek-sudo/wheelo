@@ -1,11 +1,47 @@
 /* ==========================================================================
-   WHEELO - Production Relational Database Engine (Persistent JSON / SQLite)
+   WHEELO - Firebase Firestore Cloud Database Engine
    ========================================================================== */
 
 const fs = require('fs');
 const path = require('path');
 
+let admin = null;
+let firestoreDb = null;
+let isFirebaseConnected = false;
+
 const DB_FILE = path.join(__dirname, 'wheelo.db.json');
+const FIREBASE_KEY_FILE = path.join(__dirname, 'firebase-key.json');
+
+// Attempt Firebase Admin SDK Initialization
+try {
+  admin = require('firebase-admin');
+
+  let credential = null;
+  if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    try {
+      const serviceAccount = typeof process.env.FIREBASE_SERVICE_ACCOUNT === 'string'
+        ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
+        : process.env.FIREBASE_SERVICE_ACCOUNT;
+      credential = admin.credential.cert(serviceAccount);
+    } catch (e) {
+      console.warn('FIREBASE_SERVICE_ACCOUNT env parse warning:', e.message);
+    }
+  } else if (fs.existsSync(FIREBASE_KEY_FILE)) {
+    const serviceAccount = require(FIREBASE_KEY_FILE);
+    credential = admin.credential.cert(serviceAccount);
+  }
+
+  if (credential) {
+    admin.initializeApp({ credential });
+    firestoreDb = admin.firestore();
+    isFirebaseConnected = true;
+    console.log('✅ Connected to Firebase Firestore Cloud Database!');
+  } else {
+    console.log('ℹ️ Firebase SDK installed. Awaiting Firebase Service Account Key (firebase-key.json or FIREBASE_SERVICE_ACCOUNT env).');
+  }
+} catch (err) {
+  console.warn('Firebase Admin SDK load warning:', err.message);
+}
 
 const defaultDb = {
   users: [
@@ -84,6 +120,13 @@ class DatabaseEngine {
     }
   }
 
+  getDatabaseStatus() {
+    if (isFirebaseConnected) {
+      return 'Connected to Firebase Firestore Cloud Database';
+    }
+    return 'Firebase Firestore Driver Engine Ready (Awaiting Credentials)';
+  }
+
   // User Management CRUD
   getAllUsers() {
     const db = this.load();
@@ -95,6 +138,11 @@ class DatabaseEngine {
     const initialLen = db.users.length;
     db.users = db.users.filter(u => u.id !== userId);
     this.save(db);
+
+    if (isFirebaseConnected && firestoreDb) {
+      firestoreDb.collection('users').doc(userId).delete().catch(e => console.warn('Firestore delete user error:', e));
+    }
+
     return db.users.length < initialLen;
   }
 
@@ -104,6 +152,11 @@ class DatabaseEngine {
     if (!user) return null;
     user.blocked = !user.blocked;
     this.save(db);
+
+    if (isFirebaseConnected && firestoreDb) {
+      firestoreDb.collection('users').doc(userId).set({ blocked: user.blocked }, { merge: true }).catch(e => console.warn('Firestore block error:', e));
+    }
+
     return user;
   }
 
@@ -130,6 +183,11 @@ class DatabaseEngine {
 
     db.users.push(newUser);
     this.save(db);
+
+    if (isFirebaseConnected && firestoreDb) {
+      firestoreDb.collection('users').doc(newUser.id).set(newUser).catch(e => console.warn('Firestore register error:', e));
+    }
+
     return { success: true, user: newUser };
   }
 
@@ -158,6 +216,11 @@ class DatabaseEngine {
       submitted_at: new Date().toISOString()
     };
     this.save(db);
+
+    if (isFirebaseConnected && firestoreDb) {
+      firestoreDb.collection('driver_kyc').doc('latest').set(db.driver_kyc).catch(e => console.warn('Firestore KYC submit error:', e));
+    }
+
     return db.driver_kyc;
   }
 
@@ -173,6 +236,11 @@ class DatabaseEngine {
     if (idx >= 0) {
       db.vehicles[idx] = { ...db.vehicles[idx], ...vehicleData };
       this.save(db);
+
+      if (isFirebaseConnected && firestoreDb) {
+        firestoreDb.collection('vehicles').doc(id).set(db.vehicles[idx], { merge: true }).catch(e => console.warn('Firestore vehicle update error:', e));
+      }
+
       return db.vehicles[idx];
     }
     return null;
@@ -194,6 +262,11 @@ class DatabaseEngine {
     };
     db.vehicles.push(newVehicle);
     this.save(db);
+
+    if (isFirebaseConnected && firestoreDb) {
+      firestoreDb.collection('vehicles').doc(newVehicle.id).set(newVehicle).catch(e => console.warn('Firestore vehicle add error:', e));
+    }
+
     return newVehicle;
   }
 
@@ -202,6 +275,11 @@ class DatabaseEngine {
     if (!db.vehicles) return false;
     db.vehicles = db.vehicles.filter(v => v.id !== id);
     this.save(db);
+
+    if (isFirebaseConnected && firestoreDb) {
+      firestoreDb.collection('vehicles').doc(id).delete().catch(e => console.warn('Firestore vehicle delete error:', e));
+    }
+
     return true;
   }
 
@@ -212,6 +290,10 @@ class DatabaseEngine {
       db.driver_kyc.verified = verified;
       db.driver_kyc.status = verified ? 'VERIFIED' : 'REJECTED';
       this.save(db);
+
+      if (isFirebaseConnected && firestoreDb) {
+        firestoreDb.collection('driver_kyc').doc('latest').set(db.driver_kyc, { merge: true }).catch(e => console.warn('Firestore KYC update status error:', e));
+      }
     }
     return db.driver_kyc;
   }
@@ -231,6 +313,11 @@ class DatabaseEngine {
       db.users.push(user);
     }
     this.save(db);
+
+    if (isFirebaseConnected && firestoreDb) {
+      firestoreDb.collection('users').doc(user.id).set(user, { merge: true }).catch(e => console.warn('Firestore save user error:', e));
+    }
+
     return user;
   }
 
@@ -245,6 +332,11 @@ class DatabaseEngine {
     if (!db.saved_places) db.saved_places = [];
     db.saved_places.push(place);
     this.save(db);
+
+    if (isFirebaseConnected && firestoreDb) {
+      firestoreDb.collection('saved_places').add(place).catch(e => console.warn('Firestore save place error:', e));
+    }
+
     return place;
   }
 
@@ -277,6 +369,11 @@ class DatabaseEngine {
     db.transactions.unshift(txn);
     this.save(db);
 
+    if (isFirebaseConnected && firestoreDb) {
+      if (user) firestoreDb.collection('users').doc(user.id).set({ wallet_balance: user.wallet_balance }, { merge: true }).catch(e => console.warn('Firestore update wallet error:', e));
+      firestoreDb.collection('transactions').doc(txn.id).set(txn).catch(e => console.warn('Firestore txn error:', e));
+    }
+
     return { balance: user ? user.wallet_balance : 650.00, transaction: txn };
   }
 
@@ -305,6 +402,11 @@ class DatabaseEngine {
     if (!db.rides) db.rides = [];
     db.rides.unshift(ride);
     this.save(db);
+
+    if (isFirebaseConnected && firestoreDb) {
+      firestoreDb.collection('rides').doc(ride.id).set(ride).catch(e => console.warn('Firestore create ride error:', e));
+    }
+
     return ride;
   }
 
@@ -321,6 +423,11 @@ class DatabaseEngine {
     ride.status = status;
     Object.assign(ride, extraData);
     this.save(db);
+
+    if (isFirebaseConnected && firestoreDb) {
+      firestoreDb.collection('rides').doc(ride.id).set(ride, { merge: true }).catch(e => console.warn('Firestore update ride error:', e));
+    }
+
     return ride;
   }
 

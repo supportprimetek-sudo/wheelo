@@ -299,7 +299,12 @@ const server = http.createServer((req, res) => {
         res.writeHead(500, { 'Content-Type': 'text/plain' });
         res.end('500 Internal Server Error');
       } else {
-        res.writeHead(200, { 'Content-Type': mimeTypes[ext] || 'text/plain' });
+        res.writeHead(200, {
+          'Content-Type': mimeTypes[ext] || 'text/plain',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        });
         res.end(content);
       }
     });

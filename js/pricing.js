@@ -3,13 +3,7 @@
    ========================================================================== */
 
 const WheeloPricing = (function () {
-  let vehicleTariffsList = [
-    { id: 'bike', name: 'Wheelo Bike', baseFare: 15, perKmRate: 5, perMinRate: 1.0, minFare: 25, capacity: '1 Rider', icon: 'fa-motorcycle', badge: 'FASTEST' },
-    { id: 'auto', name: 'Wheelo Auto', baseFare: 20, perKmRate: 5, perMinRate: 1.5, minFare: 35, capacity: '3 Passengers', icon: 'fa-taxi', badge: 'POPULAR' },
-    { id: 'cab', name: 'Economy Cab', baseFare: 30, perKmRate: 5, perMinRate: 2.0, minFare: 50, capacity: '4 Passengers', icon: 'fa-car-side', badge: 'AC' },
-    { id: 'sedan', name: 'Premium Sedan', baseFare: 45, perKmRate: 5, perMinRate: 2.5, minFare: 75, capacity: '4 Passengers', icon: 'fa-car', badge: 'LUXURY' },
-    { id: 'parcel', name: 'Express Parcel', baseFare: 20, perKmRate: 5, perMinRate: 1.0, minFare: 30, capacity: 'Package', icon: 'fa-box-open', badge: 'INSTANT' }
-  ];
+  let vehicleTariffsList = [];
 
   let activeCoupon = null;
   let hasIntermediateStop = false;
@@ -19,7 +13,7 @@ const WheeloPricing = (function () {
   async function syncVehiclesFromAPI() {
     if (typeof WheeloAPI !== 'undefined' && typeof WheeloAPI.getVehicles === 'function') {
       const data = await WheeloAPI.getVehicles();
-      if (data && Array.isArray(data) && data.length > 0) {
+      if (data && Array.isArray(data)) {
         vehicleTariffsList = data;
       }
     }
@@ -27,7 +21,9 @@ const WheeloPricing = (function () {
   }
 
   function calculateFare(vehicleId, distanceKm, durationMin = 15) {
-    const tariff = vehicleTariffsList.find(v => v.id === vehicleId) || vehicleTariffsList[0];
+    const tariff = (vehicleTariffsList && vehicleTariffsList.length > 0)
+      ? (vehicleTariffsList.find(v => v.id === vehicleId) || vehicleTariffsList[0])
+      : { id: 'standard', name: 'Live Category', baseFare: 20, perKmRate: 5, perMinRate: 1.5, minFare: 30 };
     
     const distanceCost = distanceKm * tariff.perKmRate;
     const timeCost = durationMin * tariff.perMinRate;

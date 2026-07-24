@@ -45,13 +45,7 @@ try {
 
 const defaultDb = {
   users: [],
-  vehicles: [
-    { id: 'bike', name: 'Wheelo Bike', baseFare: 15, perKmRate: 5, perMinRate: 1.0, minFare: 25, capacity: '1 Rider', icon: 'fa-motorcycle', badge: 'FASTEST' },
-    { id: 'auto', name: 'Wheelo Auto', baseFare: 20, perKmRate: 5, perMinRate: 1.5, minFare: 35, capacity: '3 Passengers', icon: 'fa-taxi', badge: 'POPULAR' },
-    { id: 'cab', name: 'Economy Cab', baseFare: 30, perKmRate: 5, perMinRate: 2.0, minFare: 50, capacity: '4 Passengers', icon: 'fa-car-side', badge: 'AC' },
-    { id: 'sedan', name: 'Premium Sedan', baseFare: 45, perKmRate: 5, perMinRate: 2.5, minFare: 75, capacity: '4 Passengers', icon: 'fa-car', badge: 'LUXURY' },
-    { id: 'parcel', name: 'Express Parcel', baseFare: 20, perKmRate: 5, perMinRate: 1.0, minFare: 30, capacity: 'Package', icon: 'fa-box-open', badge: 'INSTANT' }
-  ],
+  vehicles: [],
   saved_places: [],
   coupons: {
     'FIRST50': { discountPercent: 50, maxDiscount: 40, desc: '50% OFF (Max ₹40)' },

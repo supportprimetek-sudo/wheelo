@@ -18,6 +18,7 @@ const defaultDb = {
       role: 'rider',
       wallet_balance: 650.00,
       member_tier: 'Gold Rider',
+      blocked: false,
       created_at: new Date().toISOString()
     },
     {
@@ -32,6 +33,7 @@ const defaultDb = {
       today_earnings: 1420.00,
       trips_completed: 12,
       rating: 4.89,
+      blocked: false,
       created_at: new Date().toISOString()
     }
   ],
@@ -116,6 +118,29 @@ class DatabaseEngine {
     }
   }
 
+  // User Management CRUD
+  getAllUsers() {
+    const db = this.load();
+    return db.users || defaultDb.users;
+  }
+
+  deleteUser(userId) {
+    const db = this.load();
+    const initialLen = db.users.length;
+    db.users = db.users.filter(u => u.id !== userId);
+    this.save(db);
+    return db.users.length < initialLen;
+  }
+
+  toggleBlockUser(userId) {
+    const db = this.load();
+    const user = db.users.find(u => u.id === userId);
+    if (!user) return null;
+    user.blocked = !user.blocked;
+    this.save(db);
+    return user;
+  }
+
   // Authentication Operations
   registerUser(userData) {
     const db = this.load();
@@ -133,6 +158,7 @@ class DatabaseEngine {
       role: 'rider',
       wallet_balance: 500.00,
       member_tier: 'Gold Rider',
+      blocked: false,
       created_at: new Date().toISOString()
     };
 
@@ -145,6 +171,7 @@ class DatabaseEngine {
     const db = this.load();
     const user = db.users.find(u => u.email.toLowerCase() === (email || '').toLowerCase());
     if (!user) return { success: false, message: 'No account found with this email.' };
+    if (user.blocked) return { success: false, message: 'Your account has been suspended by Admin.' };
     if (user.password && user.password !== password) {
       return { success: false, message: 'Incorrect password.' };
     }

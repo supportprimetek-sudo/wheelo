@@ -57,6 +57,26 @@ const server = http.createServer((req, res) => {
       });
     }
 
+    // GET /api/admin/users
+    if (method === 'GET' && path === '/api/admin/users') {
+      return sendJSON(200, db.getAllUsers());
+    }
+
+    // POST /api/admin/users/delete
+    if (method === 'POST' && path === '/api/admin/users/delete') {
+      const { userId } = payload;
+      const success = db.deleteUser(userId);
+      return sendJSON(200, { success });
+    }
+
+    // POST /api/admin/users/toggle-block
+    if (method === 'POST' && path === '/api/admin/users/toggle-block') {
+      const { userId } = payload;
+      const user = db.toggleBlockUser(userId);
+      if (!user) return sendJSON(404, { error: 'User Not Found' });
+      return sendJSON(200, { success: true, user });
+    }
+
     // POST /api/users/register
     if (method === 'POST' && path === '/api/users/register') {
       const resData = db.registerUser(payload);
@@ -104,7 +124,8 @@ const server = http.createServer((req, res) => {
         },
         recentRides: allRides.slice(0, 5),
         kycDetails: kyc,
-        vehicles: db.getVehicles()
+        vehicles: db.getVehicles(),
+        users: db.getAllUsers()
       });
     }
 

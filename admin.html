@@ -107,11 +107,13 @@
     .status-tag { padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; display: inline-block; }
     .status-searching { background: rgba(255, 209, 0, 0.2); color: var(--primary); }
     .status-completed { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+    .status-blocked { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
 
     .btn { background: var(--primary); color: #000; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
     .btn-secondary { background: rgba(255,255,255,0.08); color: white; border: 1px solid var(--border-color); }
     .btn-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
     .btn-success { background: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid var(--success); }
+    .btn-warning { background: rgba(245, 158, 11, 0.2); color: #F59E0B; border: 1px solid #F59E0B; }
   </style>
 </head>
 <body>
@@ -148,6 +150,30 @@
       <div class="label">Active Online Captains</div>
       <div id="stat-captains" class="val" style="color: #A855F7">8 Drivers</div>
     </div>
+  </div>
+
+  <!-- REGISTERED USERS MANAGEMENT & REMOVAL DESK -->
+  <div class="card" style="margin-bottom: 24px;">
+    <div class="section-title">
+      <div><i class="fas fa-users-gear" style="color: var(--secondary)"></i> Registered User Accounts & Removal Desk</div>
+      <div style="font-size:12px; color:var(--text-muted);">Manage or permanently delete platform users</div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>User Info</th>
+          <th>Contact Info</th>
+          <th>Role</th>
+          <th>Wallet Balance</th>
+          <th>Account Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="admin-users-tbody">
+        <!-- Loaded dynamically -->
+      </tbody>
+    </table>
   </div>
 
   <!-- VEHICLE FLEET & PRICE CRUD TABLE -->
@@ -288,6 +314,7 @@
           kycBadge.style.color = isVerified ? 'var(--success)' : 'var(--danger)';
         }
 
+        renderUsersTable(data.users || []);
         renderVehiclesTable(data.vehicles || []);
 
         const tbody = document.getElementById('admin-rides-tbody');
@@ -315,6 +342,68 @@
         });
       } catch (e) {
         console.warn('Admin dashboard polling exception:', e);
+      }
+    }
+
+    function renderUsersTable(users) {
+      const tbody = document.getElementById('admin-users-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      if (!users || users.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No registered users found</td></tr>';
+        return;
+      }
+
+      users.forEach(u => {
+        const tr = document.createElement('tr');
+        const isBlocked = u.blocked === true;
+        const statusTag = isBlocked ? '<span class="status-tag status-blocked">SUSPENDED</span>' : '<span class="status-tag status-completed">ACTIVE</span>';
+
+        tr.innerHTML = `
+          <td>
+            <div style="font-weight: 700; color: var(--text-main);">${u.name}</div>
+            <div style="font-size: 10px; color: var(--text-muted);">${u.id}</div>
+          </td>
+          <td>
+            <div style="font-weight: 600;">${u.email}</div>
+            <div style="font-size: 11px; color: var(--text-muted);">${u.phone}</div>
+          </td>
+          <td><span style="text-transform: uppercase; font-size: 11px; font-weight: 700; color: var(--secondary);">${u.role || 'RIDER'}</span></td>
+          <td><strong style="color: var(--primary)">₹${u.wallet_balance || 0}</strong></td>
+          <td>${statusTag}</td>
+          <td>
+            <div style="display: flex; gap: 6px;">
+              <button class="btn btn-warning" style="padding: 4px 8px; font-size: 11px;" onclick="toggleBlockUser('${u.id}')">${isBlocked ? 'UNBLOCK' : 'SUSPEND'}</button>
+              <button class="btn btn-danger" style="padding: 4px 8px; font-size: 11px;" onclick="deleteUserAccount('${u.id}')"><i class="fas fa-trash"></i> DELETE USER</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function deleteUserAccount(userId) {
+      if (!confirm(`Are you sure you want to PERMANENTLY DELETE user account "${userId}" from WHEELO?`)) return;
+      const res = await fetch('/api/admin/users/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId })
+      });
+      if (res.ok) {
+        alert(`User account "${userId}" deleted successfully.`);
+        loadAdminTelemetry();
+      }
+    }
+
+    async function toggleBlockUser(userId) {
+      const res = await fetch('/api/admin/users/toggle-block', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId })
+      });
+      if (res.ok) {
+        loadAdminTelemetry();
       }
     }
 
